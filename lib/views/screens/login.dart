@@ -74,11 +74,13 @@ class Login extends StatelessWidget {
                 child: ElevatedButton(
                     onPressed: () {
                       if (name.text.isEmpty) {
-                        Get.snackbar("Validation", "Please provide the Username",
+                        Get.snackbar(
+                            "Validation", "Please provide the Username",
                             icon: const Icon(Icons.error),
                             backgroundColor: const Color(0xFFFAF9F6));
                       } else if (pass.text.isEmpty) {
-                        Get.snackbar("Validation", "Please provide the Password",
+                        Get.snackbar(
+                            "Validation", "Please provide the Password",
                             icon: const Icon(Icons.error),
                             backgroundColor: const Color(0xFFFAF9F6));
                       } else {
@@ -86,11 +88,12 @@ class Login extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlueAccent,
-                      foregroundColor: Colors.white),
+                        backgroundColor: Colors.lightBlueAccent,
+                        foregroundColor: Colors.white),
                     child: const Text(
                       "Login",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
                     )),
               ),
               const SizedBox(
