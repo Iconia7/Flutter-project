@@ -55,84 +55,56 @@ class Login extends StatelessWidget {
                   icon: Icons.lock,
                   isPassword: true),
               const SizedBox(height: 20),
-              ElevatedButton(
-                  onPressed: () {
-                    if (name.text.isEmpty) {
-                      Get.snackbar("Validation", "Please provide the Username",
-                          icon: const Icon(Icons.error),
-                          backgroundColor: const Color(0xFFFAF9F6));
-                    } else if (pass.text.isEmpty) {
-                      Get.snackbar("Validation", "Please provide the Password",
-                          icon: const Icon(Icons.error),
-                          backgroundColor: const Color(0xFFFAF9F6));
-                    } else {
-                      Get.defaultDialog(
-                        title: "Log In",
-                        content: const Text("Do you want to Log in?"),
-                        confirm: ElevatedButton(
-                            onPressed: () {
-                              Get.toNamed("/home");
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.lightBlueAccent,
-                                foregroundColor: Colors.white),
-                            child: const Text(
-                              "Yes",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            )),
-                        onConfirm: () {
-                          Get.toNamed("/home");
-                        },
-                        cancel: ElevatedButton(
-                            onPressed: () {
-                              Get.toNamed("/login");
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.lightBlueAccent,
-                                foregroundColor: Colors.white),
-                            child: const Text(
-                              "No",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            )),
-                        onCancel: () {
-                          Get.toNamed("/login");
-                        },
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
+              Row(
+                children: [
+                  TextButton(
+                    child: const Text(
+                      "Forgot Password?",
+                      style: TextStyle(),
+                    ),
+                    onPressed: () {
+                      Get.toNamed("/signup");
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 250,
+                height: 50,
+                child: ElevatedButton(
+                    onPressed: () {
+                      if (name.text.isEmpty) {
+                        Get.snackbar("Validation", "Please provide the Username",
+                            icon: const Icon(Icons.error),
+                            backgroundColor: const Color(0xFFFAF9F6));
+                      } else if (pass.text.isEmpty) {
+                        Get.snackbar("Validation", "Please provide the Password",
+                            icon: const Icon(Icons.error),
+                            backgroundColor: const Color(0xFFFAF9F6));
+                      } else {
+                        Get.toNamed("/home");
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.lightBlueAccent,
                       foregroundColor: Colors.white),
-                  child: const Text(
-                    "Login",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                  )),
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
+                    )),
+              ),
               const SizedBox(
                 height: 5,
               ),
               TextButton(
-                child: Text("Don't have an account?"),
-                onPressed: () {},
+                child: const Text("Don't have an account?  SignUp"),
+                onPressed: () {
+                  Get.toNamed("/signup");
+                },
               ),
               const SizedBox(
                 height: 5,
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed("/signup");
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlueAccent,
-                      foregroundColor: Colors.white),
-                  child: const Text(
-                    "Sign Up",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                  )),
-              const SizedBox(
-                height: 20,
-              )
             ],
           ),
         ),

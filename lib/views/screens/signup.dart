@@ -51,8 +51,8 @@ class Signup extends StatelessWidget {
                     height: 20,
                   ),
                   const Text(
-                    "Register",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    "Welcome",
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
                     height: 20,
@@ -101,18 +101,28 @@ class Signup extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        Get.toNamed("/home");
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightBlueAccent,
-                          foregroundColor: Colors.white),
-                      child: const Text(
-                        "Register",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      )),
+                  SizedBox(
+                    width: 250,
+                    height: 50,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Get.toNamed("/home");
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.lightBlueAccent,
+                            foregroundColor: Colors.white),
+                        child: const Text(
+                          "Register",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 23),
+                        )),
+                  ),
+                  TextButton(
+                    child: const Text("Already have an account?  Login"),
+                    onPressed: () {
+                      Get.toNamed("/");
+                    },
+                  ),
                   const SizedBox(
                     height: 20,
                   )
