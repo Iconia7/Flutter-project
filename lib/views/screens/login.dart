@@ -112,7 +112,10 @@ class Login extends StatelessWidget {
               const SizedBox(
                 height: 5,
               ),
-              const Text("Don't have an account?"),
+              TextButton(
+                child: Text("Don't have an account?"),
+                onPressed: () {},
+              ),
               const SizedBox(
                 height: 5,
               ),
