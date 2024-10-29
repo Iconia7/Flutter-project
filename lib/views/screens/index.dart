@@ -7,7 +7,7 @@ class Index extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
         child: Text(
-      "Index page",
+      "Index pages",
       style: TextStyle(fontSize: 35),
     ));
   }
