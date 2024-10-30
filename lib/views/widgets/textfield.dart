@@ -1,28 +1,58 @@
 import 'package:flutter/material.dart';
 
-Widget myTextField(
-    // this is an example of a function-based widget (a function that returns a widget/its return type is a widget)
-    {required TextEditingController
-        controller, // this is a required parameter in a pull of optional named parameters
-    String hint = "",
-    IconData icon = Icons.abc,
-    Color colour = const Color.fromARGB(255, 1, 170, 24),
-    bool isPassword = false}) {
-  return Padding(
-    padding: const EdgeInsets.only(left: 30, right: 30),
-    child: TextField(
-      controller: controller,
-      decoration: InputDecoration(
-          fillColor: colour,
-          hintText: hint,
+class MyTextField extends StatefulWidget {
+  final TextEditingController controller;
+  final String hint;
+  final IconData icon;
+  final Color colour;
+  final bool isPassword;
+
+  const MyTextField({
+    Key? key,
+    required this.controller,
+    this.hint = "",
+    this.icon = Icons.abc,
+    this.colour = const Color.fromARGB(255, 1, 170, 24),
+    this.isPassword = false,
+  }) : super(key: key);
+
+  @override
+  _MyTextFieldState createState() => _MyTextFieldState();
+}
+
+class _MyTextFieldState extends State<MyTextField> {
+  bool _isObscured = true; // Track the visibility of the password
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, right: 30),
+      child: TextField(
+        controller: widget.controller,
+        obscureText:
+            widget.isPassword && _isObscured, // Control text visibility
+        decoration: InputDecoration(
+          fillColor: widget.colour,
+          hintText: widget.hint,
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(22),
-              borderSide: const BorderSide(color: Colors.lightBlueAccent)),
-          prefixIcon: Icon(icon), // adds icon before the text field
-          suffixIcon: isPassword
-              ? const Icon(Icons.visibility)
-              : null // adds icon after the text field
+            borderRadius: BorderRadius.circular(22),
+            borderSide: const BorderSide(color: Colors.lightBlueAccent),
           ),
-    ),
-  );
+          prefixIcon: Icon(widget.icon),
+          suffixIcon: widget.isPassword
+              ? IconButton(
+                  icon: Icon(
+                    _isObscured ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isObscured = !_isObscured;
+                    });
+                  },
+                )
+              : null,
+        ),
+      ),
+    );
+  }
 }
