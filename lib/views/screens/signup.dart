@@ -44,21 +44,21 @@ class Signup extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                myTextField(
-                    controller: email,
-                    hint: "Enter your Email Address",
-                    icon: Icons.email),
-                const SizedBox(
-                  height: 20,
-                ),
-                myTextField(
+                MyTextField(
                     controller: user,
                     hint: "Enter a Username",
                     icon: Icons.person),
                 const SizedBox(
                   height: 20,
                 ),
-                myTextField(
+                MyTextField(
+                    controller: email,
+                    hint: "Enter your Email Address",
+                    icon: Icons.email),
+                const SizedBox(
+                  height: 20,
+                ),
+                MyTextField(
                     controller: pass,
                     hint: "Password",
                     icon: Icons.lock,
@@ -66,7 +66,7 @@ class Signup extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                myTextField(
+                MyTextField(
                     controller: cpass,
                     colour: Colors.grey,
                     hint: "Confirm Password",
