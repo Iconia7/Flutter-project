@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/controller/logincontroller.dart';
 import 'package:project/views/widgets/textfield.dart';
+// ignore: depend_on_referenced_packages
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sign_in_button/sign_in_button.dart';
 
 TextEditingController name =
     TextEditingController(); // instance 2 of the TextEditingController class
@@ -41,12 +41,11 @@ class Login extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            myTextField(
-                controller: name, hint: "Enter Username", icon: Icons.person),
+            MyTextField(controller: name, hint: "Username", icon: Icons.person),
             const SizedBox(
               height: 20,
             ),
-            myTextField(
+            MyTextField(
                 controller: pass,
                 hint: "Password",
                 icon: Icons.lock,
@@ -111,12 +110,35 @@ class Login extends StatelessWidget {
               child: SizedBox(
                 width: 250,
                 height: 50,
-                child: SignInButton(
-                  Buttons.google,
-                  text: "Sign in with Google",
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25)),
-                  onPressed: () {},
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Add Google Sign-In functionality here
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25)),
+                    side: const BorderSide(color: Colors.grey),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/google_icon.png', // Path to your Google icon
+                        height: 24,
+                        width: 24,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        "Sign in with Google",
+                        style: GoogleFonts.notoSerif(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
