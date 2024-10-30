@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/controller/logincontroller.dart';
 import 'package:project/views/widgets/textfield.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 TextEditingController name =
     TextEditingController(); // instance 2 of the TextEditingController class
@@ -18,49 +19,47 @@ class Login extends StatelessWidget {
       //child: (
       padding: const EdgeInsets.all(40),
       child: Center(
-        child: Container(
-          // the container property is limited to just a rectangular shape
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(55),
-              border: Border.all(color: Colors.orangeAccent, width: 4)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              const CircleAvatar(
-                backgroundImage: AssetImage("assets/images/logo.jpeg"),
-                radius: 70,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Text(
-                "Sign In",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              myTextField(
-                  controller: name, hint: "Enter Username", icon: Icons.person),
-              const SizedBox(
-                height: 20,
-              ),
-              myTextField(
-                  controller: pass,
-                  hint: "Password",
-                  icon: Icons.lock,
-                  isPassword: true),
-              const SizedBox(height: 20),
-              Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              height: 20,
+            ),
+            const CircleAvatar(
+              backgroundImage: AssetImage("assets/images/logo.jpeg"),
+              radius: 70,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              "Sign In",
+              style: GoogleFonts.notoSerif(
+                  fontSize: 27, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            myTextField(
+                controller: name, hint: "Enter Username", icon: Icons.person),
+            const SizedBox(
+              height: 20,
+            ),
+            myTextField(
+                controller: pass,
+                hint: "Password",
+                icon: Icons.lock,
+                isPassword: true),
+            const SizedBox(height: 1),
+            Padding(
+              padding: const EdgeInsets.only(right: 35),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    child: const Text(
+                    child: Text(
                       "Forgot Password?",
-                      style: TextStyle(),
+                      style: GoogleFonts.notoSerif(fontSize: 15),
                     ),
                     onPressed: () {
                       Get.toNamed("/signup");
@@ -68,48 +67,73 @@ class Login extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
-                width: 250,
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: () {
-                      if (name.text.isEmpty) {
-                        Get.snackbar(
-                            "Validation", "Please provide the Username",
-                            icon: const Icon(Icons.error),
-                            backgroundColor: const Color(0xFFFAF9F6));
-                      } else if (pass.text.isEmpty) {
-                        Get.snackbar(
-                            "Validation", "Please provide the Password",
-                            icon: const Icon(Icons.error),
-                            backgroundColor: const Color(0xFFFAF9F6));
-                      } else {
-                        Get.toNamed("/home");
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightBlueAccent,
-                        foregroundColor: Colors.white),
-                    child: const Text(
-                      "Login",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
-                    )),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              TextButton(
-                child: const Text("Don't have an account?  SignUp"),
-                onPressed: () {
-                  Get.toNamed("/signup");
-                },
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-            ],
-          ),
+            ),
+            SizedBox(
+              width: 250,
+              height: 50,
+              child: ElevatedButton(
+                  onPressed: () {
+                    if (name.text.isEmpty) {
+                      Get.snackbar("Validation", "Please provide the Username",
+                          icon: const Icon(Icons.error),
+                          backgroundColor:
+                              const Color.fromARGB(255, 1, 170, 24));
+                    } else if (pass.text.isEmpty) {
+                      Get.snackbar("Validation", "Please provide the Password",
+                          icon: const Icon(Icons.error),
+                          backgroundColor:
+                              const Color.fromARGB(255, 1, 189, 57));
+                    } else {
+                      Get.toNamed("/home");
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.lightBlueAccent,
+                      foregroundColor: Colors.white),
+                  child: Text("Login",
+                      style: GoogleFonts.notoSerif(
+                          fontSize: 25, fontWeight: FontWeight.bold))),
+            ),
+            const SizedBox(
+              height: 7,
+            ),
+            Text(
+              "---------------------  OR  ---------------------",
+              style: GoogleFonts.notoSerif(fontSize: 16),
+            ),
+            const SizedBox(
+              height: 7,
+            ),
+            SizedBox(
+              width: 250,
+              height: 50,
+              child: ElevatedButton.icon(
+                  icon: const Icon(Icons.email),
+                  label: Text(
+                    "Sign in with Google",
+                    style: GoogleFonts.notoSerif(fontSize: 17),
+                  ),
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)))),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Don't have an account?", style: GoogleFonts.notoSerif()),
+                TextButton(
+                  child: Text("SignUp", style: GoogleFonts.notoSerif()),
+                  onPressed: () {
+                    Get.toNamed("/signup");
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+          ],
         ),
       ),
     );

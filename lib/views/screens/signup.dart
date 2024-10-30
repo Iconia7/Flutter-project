@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/controller/signupcontroller.dart';
 import 'package:project/views/widgets/textfield.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 TextEditingController fname = TextEditingController();
 TextEditingController lname = TextEditingController();
@@ -19,115 +20,113 @@ class Signup extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 0, 139, 5),
+        backgroundColor: const Color.fromARGB(255, 252, 253, 252),
         appBar: AppBar(
           title: const Text(
             "NEWTON DESIGNS",
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: const Color.fromARGB(255, 0, 139, 5),
-          foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+          backgroundColor: const Color.fromARGB(255, 253, 255, 253),
+          foregroundColor: const Color.fromARGB(255, 10, 10, 10),
           centerTitle: true,
         ),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(30),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(55),
-                  border: Border.all(color: Colors.orangeAccent, width: 4)),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const CircleAvatar(
-                    backgroundImage: AssetImage("assets/images/logo.jpeg"),
-                    radius: 70,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text(
-                    "Welcome",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  myTextField(
-                      controller: fname,
-                      hint: "Enter First Name",
-                      icon: Icons.person),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  myTextField(
-                      controller: lname,
-                      hint: "Enter Last Name",
-                      icon: Icons.person),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  myTextField(
-                      controller: email,
-                      hint: "Enter your Email Address",
-                      icon: Icons.email),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  myTextField(
-                      controller: user,
-                      hint: "Enter a Username",
-                      icon: Icons.person),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  myTextField(
-                      controller: pass,
-                      hint: "Password",
-                      icon: Icons.lock,
-                      isPassword: true),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  myTextField(
-                      controller: cpass,
-                      hint: "Confirm Password",
-                      icon: Icons.lock,
-                      isPassword: true),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    width: 250,
-                    height: 50,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Get.toNamed("/home");
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.lightBlueAccent,
-                            foregroundColor: Colors.white),
-                        child: const Text(
-                          "Register",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 23),
-                        )),
-                  ),
-                  TextButton(
-                    child: const Text("Already have an account?  Login"),
-                    onPressed: () {
-                      Get.toNamed("/");
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  )
-                ],
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                const CircleAvatar(
+                  backgroundImage: AssetImage("assets/images/logo.jpeg"),
+                  radius: 70,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text("Welcome",
+                    style: GoogleFonts.notoSerif(
+                        fontSize: 27, fontWeight: FontWeight.bold)),
+                const SizedBox(
+                  height: 20,
+                ),
+                myTextField(
+                    controller: fname,
+                    hint: "Enter First Name",
+                    icon: Icons.person),
+                const SizedBox(
+                  height: 20,
+                ),
+                myTextField(
+                    controller: lname,
+                    hint: "Enter Last Name",
+                    icon: Icons.person),
+                const SizedBox(
+                  height: 20,
+                ),
+                myTextField(
+                    controller: email,
+                    hint: "Enter your Email Address",
+                    icon: Icons.email),
+                const SizedBox(
+                  height: 20,
+                ),
+                myTextField(
+                    controller: user,
+                    hint: "Enter a Username",
+                    icon: Icons.person),
+                const SizedBox(
+                  height: 20,
+                ),
+                myTextField(
+                    controller: pass,
+                    hint: "Password",
+                    icon: Icons.lock,
+                    isPassword: true),
+                const SizedBox(
+                  height: 20,
+                ),
+                myTextField(
+                    controller: cpass,
+                    hint: "Confirm Password",
+                    icon: Icons.lock,
+                    isPassword: true),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 250,
+                  height: 50,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Get.toNamed("/home");
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightBlueAccent,
+                          foregroundColor: Colors.white),
+                      child: Text("Register",
+                          style: GoogleFonts.notoSerif(
+                              fontSize: 25, fontWeight: FontWeight.bold))),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Already have an account?",
+                        style: GoogleFonts.notoSerif()),
+                    TextButton(
+                      child: Text("Log in", style: GoogleFonts.notoSerif()),
+                      onPressed: () {
+                        Get.toNamed("/");
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                )
+              ],
             ),
           ),
         ),

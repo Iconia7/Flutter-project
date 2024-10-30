@@ -10,18 +10,16 @@ main() {
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
- 
-   @override
+
+  @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialRoute: "/",
       getPages: routes,
       debugShowCheckedModeBanner: false,
       home: const Scaffold(
-        backgroundColor: Color.fromARGB(255, 0, 139, 5),
-
+        backgroundColor: Color.fromARGB(255, 252, 252, 252),
         body: Login(),
-        
       ),
     );
   }
