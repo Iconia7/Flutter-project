@@ -60,7 +60,9 @@ class Login extends StatelessWidget {
                   TextButton(
                     child: Text(
                       "Forgot Password?",
-                      style: GoogleFonts.notoSerif(fontSize: 15,color: Color.fromARGB(255, 1, 140, 187)),
+                      style: GoogleFonts.notoSerif(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 1, 140, 187)),
                     ),
                     onPressed: () {
                       Get.toNamed("/signup");
@@ -123,7 +125,9 @@ class Login extends StatelessWidget {
               children: [
                 Text("Don't have an account?", style: GoogleFonts.notoSerif()),
                 TextButton(
-                  child: Text("SignUp", style: GoogleFonts.notoSerif(color: Color.fromARGB(255, 1, 140, 187))),
+                  child: Text("SignUp",
+                      style: GoogleFonts.notoSerif(
+                          color: Color.fromARGB(255, 1, 140, 187))),
                   onPressed: () {
                     Get.toNamed("/signup");
                   },
