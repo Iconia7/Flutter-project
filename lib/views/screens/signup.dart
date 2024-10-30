@@ -21,15 +21,7 @@ class Signup extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: const Color.fromARGB(255, 252, 253, 252),
-        appBar: AppBar(
-          title: const Text(
-            "NEWTON DESIGNS",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: const Color.fromARGB(255, 253, 255, 253),
-          foregroundColor: const Color.fromARGB(255, 10, 10, 10),
-          centerTitle: true,
-        ),
+
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(30),
@@ -49,20 +41,6 @@ class Signup extends StatelessWidget {
                 Text("Welcome",
                     style: GoogleFonts.notoSerif(
                         fontSize: 27, fontWeight: FontWeight.bold)),
-                const SizedBox(
-                  height: 20,
-                ),
-                myTextField(
-                    controller: fname,
-                    hint: "Enter First Name",
-                    icon: Icons.person),
-                const SizedBox(
-                  height: 20,
-                ),
-                myTextField(
-                    controller: lname,
-                    hint: "Enter Last Name",
-                    icon: Icons.person),
                 const SizedBox(
                   height: 20,
                 ),
@@ -90,6 +68,7 @@ class Signup extends StatelessWidget {
                 ),
                 myTextField(
                     controller: cpass,
+                    colour: Colors.grey,
                     hint: "Confirm Password",
                     icon: Icons.lock,
                     isPassword: true),
@@ -116,7 +95,9 @@ class Signup extends StatelessWidget {
                     Text("Already have an account?",
                         style: GoogleFonts.notoSerif()),
                     TextButton(
-                      child: Text("Log in", style: GoogleFonts.notoSerif()),
+                      child: Text("Log in",
+                          style: GoogleFonts.notoSerif(
+                              color: Color.fromARGB(255, 1, 140, 187))),
                       onPressed: () {
                         Get.toNamed("/");
                       },

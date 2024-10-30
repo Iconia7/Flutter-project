@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:project/controller/logincontroller.dart';
 import 'package:project/views/widgets/textfield.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
 TextEditingController name =
     TextEditingController(); // instance 2 of the TextEditingController class
@@ -59,7 +60,7 @@ class Login extends StatelessWidget {
                   TextButton(
                     child: Text(
                       "Forgot Password?",
-                      style: GoogleFonts.notoSerif(fontSize: 15),
+                      style: GoogleFonts.notoSerif(fontSize: 15,color: Color.fromARGB(255, 1, 140, 187)),
                     ),
                     onPressed: () {
                       Get.toNamed("/signup");
@@ -104,26 +105,25 @@ class Login extends StatelessWidget {
             const SizedBox(
               height: 7,
             ),
-            SizedBox(
-              width: 250,
-              height: 50,
-              child: ElevatedButton.icon(
-                  icon: const Icon(Icons.email),
-                  label: Text(
-                    "Sign in with Google",
-                    style: GoogleFonts.notoSerif(fontSize: 17),
-                  ),
+            Center(
+              child: SizedBox(
+                width: 250,
+                height: 50,
+                child: SignInButton(
+                  Buttons.google,
+                  text: "Sign in with Google",
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25)),
                   onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)))),
+                ),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("Don't have an account?", style: GoogleFonts.notoSerif()),
                 TextButton(
-                  child: Text("SignUp", style: GoogleFonts.notoSerif()),
+                  child: Text("SignUp", style: GoogleFonts.notoSerif(color: Color.fromARGB(255, 1, 140, 187))),
                   onPressed: () {
                     Get.toNamed("/signup");
                   },

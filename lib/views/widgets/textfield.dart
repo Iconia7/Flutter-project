@@ -6,21 +6,23 @@ Widget myTextField(
         controller, // this is a required parameter in a pull of optional named parameters
     String hint = "",
     IconData icon = Icons.abc,
+    Color colour = const Color.fromARGB(255, 1, 170, 24),
     bool isPassword = false}) {
   return Padding(
-    padding: const EdgeInsets.only(left: 30,right: 30),
+    padding: const EdgeInsets.only(left: 30, right: 30),
     child: TextField(
-    controller: controller,
-    decoration: InputDecoration(
-        hintText: hint,
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(22),
-            borderSide: const BorderSide(color: Colors.lightBlueAccent)),
-        prefixIcon: Icon(icon), // adds icon before the text field
-        suffixIcon: isPassword
-            ? const Icon(Icons.visibility)
-            : null // adds icon after the text field
-        ),
-  ),
+      controller: controller,
+      decoration: InputDecoration(
+          fillColor: colour,
+          hintText: hint,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(22),
+              borderSide: const BorderSide(color: Colors.lightBlueAccent)),
+          prefixIcon: Icon(icon), // adds icon before the text field
+          suffixIcon: isPassword
+              ? const Icon(Icons.visibility)
+              : null // adds icon after the text field
+          ),
+    ),
   );
 }
