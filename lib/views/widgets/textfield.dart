@@ -8,13 +8,13 @@ class MyTextField extends StatefulWidget {
   final bool isPassword;
 
   const MyTextField({
-    Key? key,
+    super.key,
     required this.controller,
     this.hint = "",
     this.icon = Icons.abc,
     this.colour = const Color.fromARGB(255, 1, 170, 24),
     this.isPassword = false,
-  }) : super(key: key);
+  });
 
   @override
   _MyTextFieldState createState() => _MyTextFieldState();
