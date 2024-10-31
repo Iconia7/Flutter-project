@@ -16,44 +16,46 @@ class Splashscreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(40),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircleAvatar(
-                    backgroundImage: AssetImage("assets/images/logo.jpeg"),
-                    radius: 70,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "WELCOME",
-                    style: GoogleFonts.notoSerif(
-                        fontSize: 35,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "TO",
-                    style: GoogleFonts.notoSerif(
-                        fontSize: 35,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "STREAMS APP",
-                    style: GoogleFonts.notoSerif(
-                        fontSize: 35,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    width: 150,
-                    child: ElevatedButton(
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircleAvatar(
+                      backgroundImage: AssetImage("assets/images/logo.jpeg"),
+                      radius: 70,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "WELCOME",
+                      style: GoogleFonts.notoSerif(
+                          fontSize: 35,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "TO",
+                      style: GoogleFonts.notoSerif(
+                          fontSize: 35,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "STREAMS APP",
+                      style: GoogleFonts.notoSerif(
+                          fontSize: 35,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 150,
+                    ),
+                    SizedBox(
+                      width: 170,
+                      height: 50,
+                      child: ElevatedButton(
                         onPressed: () {
                           Get.toNamed("/login");
                         },
@@ -61,16 +63,18 @@ class Splashscreen extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 1, 152, 223),
                             foregroundColor: Colors.white),
-                        child: Text("Get Started",
-                            style: GoogleFonts.notoSerif(
-                                fontSize: 17,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold))),
-                  ),
-                  const SizedBox(
-                    height: 85,
-                  )
-                ],
+                        child: Text(
+                          "Get Started",
+                          style: GoogleFonts.notoSerif(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 50), // Reduced height
+                  ],
+                ),
               ),
             ),
           )
