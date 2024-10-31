@@ -86,7 +86,8 @@ class Signup extends StatelessWidget {
                         Get.toNamed("/home");
                       },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightBlueAccent,
+                          backgroundColor:
+                              const Color.fromARGB(255, 1, 152, 223),
                           foregroundColor: Colors.white),
                       child: Text("Register",
                           style: GoogleFonts.notoSerif(
