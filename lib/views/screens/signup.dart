@@ -19,7 +19,6 @@ class Signup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(children: [
-        // Background image
         Positioned.fill(
           child: Image.asset(
             'assets/images/background.jpeg',
