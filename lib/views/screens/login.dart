@@ -18,7 +18,6 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Background image
         Positioned.fill(
           child: Image.asset(
             'assets/images/background.jpeg',
@@ -26,7 +25,6 @@ class Login extends StatelessWidget {
           ),
         ),
         Padding(
-          //child: (
           padding: const EdgeInsets.all(40),
           child: Center(
             child: Column(
@@ -90,19 +88,20 @@ class Login extends StatelessWidget {
                               "Validation", "Please provide the Username",
                               icon: const Icon(Icons.error),
                               backgroundColor:
-                                  const Color.fromARGB(255, 1, 170, 24));
+                                  const Color.fromARGB(255, 1, 130, 235));
                         } else if (pass.text.isEmpty) {
                           Get.snackbar(
                               "Validation", "Please provide the Password",
                               icon: const Icon(Icons.error),
                               backgroundColor:
-                                  const Color.fromARGB(255, 1, 189, 57));
+                                  const Color.fromARGB(255, 1, 130, 235));
                         } else {
                           Get.toNamed("/home");
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightBlueAccent,
+                          backgroundColor:
+                              const Color.fromARGB(255, 1, 152, 223),
                           foregroundColor: Colors.white),
                       child: Text("Login",
                           style: GoogleFonts.notoSerif(
@@ -123,9 +122,7 @@ class Login extends StatelessWidget {
                     width: 250,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Add Google Sign-In functionality here
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -136,7 +133,7 @@ class Login extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/google_icon.png', // Path to your Google icon
+                            'assets/images/google_icon.png',
                             height: 24,
                             width: 24,
                           ),
