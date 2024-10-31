@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:project/configs/routes.dart';
-import 'package:project/views/screens/login.dart';
+import 'package:project/views/screens/splashscreen.dart';
 
 main() {
   runApp(const MyApp());
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: const Scaffold(
         backgroundColor: Color.fromARGB(255, 252, 252, 252),
-        body: Login(),
+        body: Splashscreen(),
       ),
     );
   }
