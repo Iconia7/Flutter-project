@@ -6,7 +6,7 @@ import 'package:project/views/screens/splashscreen.dart';
 
 List<GetPage> routes = [
   GetPage(name: "/", page: () => const Splashscreen()),
-  GetPage(name: "/login", page: () => Login()),
+  GetPage(name: "/login", page: () => const Login()),
   GetPage(name: "/signup", page: () => Signup()),
   GetPage(name: "/home", page: () => const Home()),
 ];

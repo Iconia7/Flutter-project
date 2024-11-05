@@ -5,6 +5,12 @@ class Orders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("Orders page"));
+    return const Center(
+      child: Text(
+        "Your Library",
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+      ),
+    );
   }
 }
+
