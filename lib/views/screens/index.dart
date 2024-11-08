@@ -28,10 +28,14 @@ class Index extends StatelessWidget {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                albumCover('assets/images/Song 1.jpeg', 'Song 1'),
-                albumCover('assets/images/Song 2.jpeg', 'Song 2'),
-                albumCover('assets/images/Song 3.jpeg', 'Song 3'),
-                albumCover('assets/images/Song 1.jpeg', 'Song 4'),
+                albumCover(context, 'assets/images/Song 1.jpeg', 'Song 1',
+                    'assets/audio/jitu.mp3'),
+                albumCover(context, 'assets/images/Song 2.jpeg', 'Song 2',
+                    'assets/audio/busy.mp3'),
+                albumCover(context, 'assets/images/Song 3.jpeg', 'Song 3',
+                    'assets/audio/perfect.mp3'),
+                albumCover(context, 'assets/images/Song 1.jpeg', 'Song 4',
+                    'assets/audio/jitu.mp3'),
               ],
             ),
           ),
@@ -46,10 +50,14 @@ class Index extends StatelessWidget {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                albumCover('assets/images/Song 1.jpeg', 'Album 1'),
-                albumCover('assets/images/Song 2.jpeg', 'Album 2'),
-                albumCover('assets/images/Song 3.jpeg', 'Album 3'),
-                albumCover('assets/images/Song 2.jpeg', 'Album 4'),
+                albumCover(context, 'assets/images/Song 1.jpeg', 'Album 1',
+                    'assets/audio/busy.mp3'),
+                albumCover(context, 'assets/images/Song 2.jpeg', 'Album 2',
+                    'assets/audio/jitu.mp3'),
+                albumCover(context, 'assets/images/Song 3.jpeg', 'Album 3',
+                    'assets/audio/perfect.mp3'),
+                albumCover(context, 'assets/images/Song 2.jpeg', 'Album 4',
+                    'assets/audio/busy.mp3'),
               ],
             ),
           ),
@@ -68,24 +76,39 @@ class Index extends StatelessWidget {
   }
 
   // Widget for a sample album cover
-  Widget albumCover(String imagePath, String label) {
-    return Container(
-      width: 100,
-      margin: const EdgeInsets.only(right: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        image: DecorationImage(
-          image: AssetImage(imagePath),
-          fit: BoxFit.cover,
+  Widget albumCover(
+      BuildContext context, String imagePath, String label, String songPath) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SongPlayer(
+              imagePath: imagePath,
+              songTitle: label,
+              songQueue: [songPath], // Pass the song to the player
+            ),
+          ),
+        );
+      },
+      child: Container(
+        width: 100,
+        margin: const EdgeInsets.only(right: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          image: DecorationImage(
+            image: AssetImage(imagePath),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Center(
-        child: Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            backgroundColor: Colors.black54,
+        child: Center(
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              backgroundColor: Colors.black54,
+            ),
           ),
         ),
       ),
@@ -155,9 +178,9 @@ class _SongCarouselState extends State<SongCarousel> {
       controller: _pageController,
       scrollDirection: Axis.horizontal,
       children: [
-        songCover(context, 'assets/images/Song 1.jpeg', 'Song 1'),
-        songCover(context, 'assets/images/Song 2.jpeg', 'Song 2'),
-        songCover(context, 'assets/images/Song 3.jpeg', 'Song 3'),
+        songCover(context, 'assets/images/Nyashinski.jpeg', 'Song 1'),
+        songCover(context, 'assets/images/Album 1.jpeg', 'Song 2'),
+        songCover(context, 'assets/images/Jitu.jpeg', 'Song 3'),
       ],
     );
   }
@@ -169,7 +192,15 @@ class _SongCarouselState extends State<SongCarousel> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SongPlayer(imagePath: imagePath, songTitle: label),
+            builder: (context) => SongPlayer(
+              imagePath: imagePath,
+              songTitle: label,
+              songQueue: [
+                'assets/audio/perfect.mp3',
+                'assets/audio/busy.mp3',
+                'assets/audio/jitu.mp3'
+              ],
+            ),
           ),
         );
       },
@@ -199,4 +230,3 @@ class _SongCarouselState extends State<SongCarousel> {
     );
   }
 }
-
