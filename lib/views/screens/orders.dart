@@ -1,92 +1,90 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'dart:io';
+import 'package:on_audio_query/on_audio_query.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:project/views/screens/songplayer.dart';
 
-class Orders extends StatefulWidget {
-  const Orders({super.key});
+class LibraryScreen extends StatefulWidget {
+  const LibraryScreen({super.key});
 
   @override
-  _OrdersState createState() => _OrdersState();
+  _LibraryScreenState createState() => _LibraryScreenState();
 }
 
-class _OrdersState extends State<Orders> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  List<File> _musicFiles = [];
-  bool isPlaying = false;
-  File? currentFile;
+class _LibraryScreenState extends State<LibraryScreen> {
+  final OnAudioQuery _audioQuery = OnAudioQuery();
+  List<SongModel> _songs = [];
 
-  // Function to pick files from device storage
-  Future<void> _pickFiles() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.audio,
-        allowMultiple: true,
-      );
+  @override
+  void initState() {
+    super.initState();
+    _requestPermission();
+  }
 
-      if (result != null) {
-        List<File> files = result.paths.map((path) => File(path!)).toList();
-        setState(() {
-          _musicFiles = files;
-        });
-      }
-    } catch (e) {
-      print("Error picking files: $e");
+  Future<void> _requestPermission() async {
+    if (await Permission.storage.request().isGranted) {
+      _loadSongs();
     }
   }
 
-  // Function to play selected file
-  Future<void> _playFile(File file) async {
-    await _audioPlayer.stop(); // Stop any currently playing audio
-    await _audioPlayer.setSourceUrl(file.path); // Set the file to be played
-    await _audioPlayer.resume(); // Start playback
+  Future<void> _loadSongs() async {
+    List<SongModel> songs = await _audioQuery.querySongs();
     setState(() {
-      isPlaying = true;
-      currentFile = file;
+      _songs = songs;
     });
   }
 
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
+  void _openSongPlayer(SongModel song) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SongPlayerScreen(
+          song: {
+            'title': song.title ?? 'Unknown Title',  // Ensure title is non-null
+            'artist': song.artist ?? 'Unknown Artist',  // Ensure artist is non-null
+            'filePath': song.data ?? '',  // Ensure filePath is non-null
+            'image': song.albumId != null ? song.albumId.toString() : '',  // Ensure image is non-null
+          },
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Your Library",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.library_music),
-            onPressed: _pickFiles,
-          ),
-        ],
+        title: Text("Library"),
+        backgroundColor: Colors.deepPurpleAccent,
       ),
-      body: _musicFiles.isEmpty
-          ? const Center(
-              child: Text(
-                "No music files found. Tap the icon to add music.",
-                style: TextStyle(fontSize: 16),
-              ),
-            )
+      body: _songs.isEmpty
+          ? Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: _musicFiles.length,
+              itemCount: _songs.length,
               itemBuilder: (context, index) {
-                File file = _musicFiles[index];
+                final song = _songs[index];
                 return ListTile(
-                  title: Text(file.path.split('/').last),
-                  leading: const Icon(Icons.music_note),
-                  trailing: Icon(
-                    file == currentFile && isPlaying
-                        ? Icons.pause
-                        : Icons.play_arrow,
+                  leading: QueryArtworkWidget(
+                    id: song.id,
+                    type: ArtworkType.AUDIO,
+                    artworkFit: BoxFit.cover,
+                    artworkBorder: BorderRadius.circular(8),
+                    nullArtworkWidget: Icon(
+                      Icons.music_note,
+                      color: Colors.grey,
+                      size: 40,
+                    ),
                   ),
-                  onTap: () => _playFile(file),
+                  title: Text(
+                    song.title ?? 'Unknown Title',  // Ensure title is non-null
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    song.artist ?? 'Unknown Artist',  // Ensure artist is non-null
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () => _openSongPlayer(song),
                 );
               },
             ),

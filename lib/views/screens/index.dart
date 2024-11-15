@@ -1,230 +1,185 @@
-import 'dart:async';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:project/views/screens/songplayer.dart';
 
-class Index extends StatelessWidget {
-  const Index({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Carousel for featured songs
-          const SizedBox(
-            height: 350,
-            child: SongCarousel(),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            "Recently Played",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 150,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                albumCover(context, 'assets/images/Song 1.jpeg', 'Song 1',
-                    'assets/audio/jitu.mp3'),
-                albumCover(context, 'assets/images/Song 2.jpeg', 'Song 2',
-                    'assets/audio/busy.mp3'),
-                albumCover(context, 'assets/images/Song 3.jpeg', 'Song 3',
-                    'assets/audio/perfect.mp3'),
-                albumCover(context, 'assets/images/Song 1.jpeg', 'Song 4',
-                    'assets/audio/jitu.mp3'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            "Popular Albums",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 150,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                albumCover(context, 'assets/images/Song 1.jpeg', 'Album 1',
-                    'assets/audio/busy.mp3'),
-                albumCover(context, 'assets/images/Song 2.jpeg', 'Album 2',
-                    'assets/audio/jitu.mp3'),
-                albumCover(context, 'assets/images/Song 3.jpeg', 'Album 3',
-                    'assets/audio/perfect.mp3'),
-                albumCover(context, 'assets/images/Song 2.jpeg', 'Album 4',
-                    'assets/audio/busy.mp3'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            "Your Playlists",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          playlistTile("Chill Vibes", "30 songs"),
-          playlistTile("Workout Mix", "25 songs"),
-          playlistTile("Top Hits 2023", "40 songs"),
-        ],
-      ),
-    );
-  }
+class DashboardScreen extends StatelessWidget {
+  final List<String> carouselImages = [
+    'assets/Album 1.jpeg',
+    'assets/Jitu.jpeg',
+    'assets/Nyashinski.jpeg',
+  ];
 
-  // Widget for a sample album cover
-  Widget albumCover(
-      BuildContext context, String imagePath, String label, String songPath) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SongPlayer(
-              imagePath: imagePath,
-              songTitle: label,
-              songQueue: [songPath], // Pass the song to the player
-            ),
-          ),
-        );
-      },
-      child: Container(
-        width: 100,
-        margin: const EdgeInsets.only(right: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          image: DecorationImage(
-            image: AssetImage(imagePath),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              backgroundColor: Colors.black54,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  final List<Map<String, String>> recentlyPlayed = [
+    {'title': 'Song 1', 'image': 'assets/images/Song 1.jpeg'},
+    {'title': 'Song 2', 'image': 'assets/images/Song 2.jpeg'},
+    {'title': 'Song 3', 'image': 'assets/images/Song 3.jpeg'},
+    {'title': 'Song 3', 'image': 'assets/images/Nyashinski.jpeg'},
+  ];
 
-  // Widget for a sample playlist
-  Widget playlistTile(String title, String subtitle) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Icon(Icons.music_note, color: Colors.black54),
-      ),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: const Icon(Icons.play_arrow),
-    );
-  }
-}
+  final List<Map<String, String>> playlists = [
+    {'name': 'Chill Vibes', 'image': 'assets/images/Album 1.jpeg'},
+    {'name': 'Workout Hits', 'image': 'assets/images/Song 1.jpeg'},
+    {'name': 'Top 50', 'image': 'assets/images/Song 2.jpeg'},
+  ];
 
-// Carousel Widget for scrolling song images
-class SongCarousel extends StatefulWidget {
-  const SongCarousel({super.key});
-
-  @override
-  _SongCarouselState createState() => _SongCarouselState();
-}
-
-class _SongCarouselState extends State<SongCarousel> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
-      if (_currentPage < 2) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
-      }
-      _pageController.animateToPage(
-        _currentPage,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _timer?.cancel();
-    super.dispose();
-  }
+   DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return PageView(
-      controller: _pageController,
-      scrollDirection: Axis.horizontal,
-      children: [
-        songCover(context, 'assets/images/Nyashinski.jpeg', 'Song 1'),
-        songCover(context, 'assets/images/Album 1.jpeg', 'Song 2'),
-        songCover(context, 'assets/images/Jitu.jpeg', 'Song 3'),
-      ],
-    );
-  }
-
-  // Widget for each song cover in the carousel with onTap functionality
-  Widget songCover(BuildContext context, String imagePath, String label) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SongPlayer(
-              imagePath: imagePath,
-              songTitle: label,
-              songQueue: [
-                'assets/audio/perfect.mp3',
-                'assets/audio/busy.mp3',
-                'assets/audio/jitu.mp3'
-              ],
-            ),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.deepPurpleAccent, Colors.purple],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(0),
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  image: DecorationImage(
-                    image: AssetImage(imagePath),
-                    fit: BoxFit.fill,
-                  ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 40),
+              // Song Carousel
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 200,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  aspectRatio: 16 / 9,
+                ),
+                items: carouselImages.map((image) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/song_player', arguments: image);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        image,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 30),
+              // Recently Played Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Recently Played",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: recentlyPlayed.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/song_player',
+                                arguments: recentlyPlayed[index],
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(right: 10),
+                              width: 100,
+                              child: Column(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.asset(
+                                      recentlyPlayed[index]['image']!,
+                                      fit: BoxFit.cover,
+                                      height: 80,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    recentlyPlayed[index]['title']!,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 0),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ],
+              SizedBox(height: 30),
+              // Playlists Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Your Playlists",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: playlists.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/playlist', arguments: playlists[index]);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.asset(
+                                  playlists[index]['image']!,
+                                  fit: BoxFit.cover,
+                                  height: 50,
+                                  width: 50,
+                                ),
+                              ),
+                              title: Text(
+                                playlists[index]['name']!,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

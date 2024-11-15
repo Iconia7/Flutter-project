@@ -1,59 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:project/controller/homecontroller.dart';
 import 'package:project/views/screens/index.dart';
 import 'package:project/views/screens/orders.dart';
 import 'package:project/views/screens/settings.dart';
 
-List<Widget> myScreens = [
-  const Index(),
-  const Orders(),
-  const Settings(),
-];
 
-const List<BottomNavigationBarItem> myMenus = [
-  BottomNavigationBarItem(
-    icon: Icon(Icons.home),
-    label: "Home",
-    backgroundColor: Colors.green,
-  ),
-  BottomNavigationBarItem(icon: Icon(Icons.library_music), label: "Library"),
-  BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
-];
 
-DashboardController dashboardController = Get.put(DashboardController());
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  // List of pages for each tab
+  final List<Widget> _pages = [
+    DashboardScreen(),
+    LibraryScreen(),
+    ProfileScreen(),
+  ];
+
+  // Update the current index when a new tab is selected
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.grey[100],
-        appBar: AppBar(
-          title: const Text(
-            "NEWTON MUSIC",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+    return Scaffold(
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.deepPurpleAccent,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white.withOpacity(0.6),
+        selectedFontSize: 14,
+        unselectedFontSize: 12,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-          backgroundColor: Colors.green,
-          foregroundColor: Colors.white,
-          centerTitle: true,
-        ),
-        bottomNavigationBar: Obx(
-          () => BottomNavigationBar(
-            items: myMenus,
-            backgroundColor: Colors.green,
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.black54,
-            currentIndex: dashboardController.selectedMenu.value,
-            onTap: (pos) => dashboardController.updateSelectedMenu(pos),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.library_music),
+            label: 'Library',
           ),
-        ),
-        body: Obx(
-          () => myScreens[dashboardController.selectedMenu.value],
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }

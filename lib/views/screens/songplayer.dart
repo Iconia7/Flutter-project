@@ -1,53 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:audio_session/audio_session.dart';
 
-class SongPlayer extends StatefulWidget {
-  final String songTitle;
-  final String imagePath;
-  final List<String> songQueue; // Queue of song URLs
+class SongPlayerScreen extends StatefulWidget {
+  final Map<String, String> song;
 
-  const SongPlayer({
-    super.key,
-    required this.songTitle,
-    required this.imagePath,
-    required this.songQueue,
-  });
+  const SongPlayerScreen({super.key, required this.song});
 
   @override
-  _SongPlayerState createState() => _SongPlayerState();
+  _SongPlayerScreenState createState() => _SongPlayerScreenState();
 }
 
-class _SongPlayerState extends State<SongPlayer> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  bool isPlaying = false;
-  bool isFavorite = false;
-  Duration currentPosition = Duration.zero;
-  Duration songDuration = Duration.zero;
-  int currentSongIndex = 0;
+class _SongPlayerScreenState extends State<SongPlayerScreen> {
+  late AudioPlayer _audioPlayer;
+  bool _isPlaying = false;
+  bool _isShuffleEnabled = false;
+  bool _isLoopEnabled = false;
 
   @override
   void initState() {
     super.initState();
+    _audioPlayer = AudioPlayer();
+    _initAudioSession();
+    _loadSong();
+  }
 
-    _audioPlayer.onDurationChanged.listen((newDuration) {
-      setState(() {
-        songDuration = newDuration;
-      });
-    });
+  Future<void> _initAudioSession() async {
+    final session = await AudioSession.instance;
+    await session.configure(AudioSessionConfiguration.music());
+  }
 
-    _audioPlayer.onPositionChanged.listen((newPosition) {
-      setState(() {
-        currentPosition = newPosition;
-      });
-    });
-
-    // Load and play the first song in the queue (or the only song)
-    if (widget.songQueue.isNotEmpty) {
-      _loadSong(widget.songQueue[currentSongIndex]).then((_) {
-        _audioPlayer.resume(); // Start playback immediately
-      });
-    } else {
-      print("songQueue is empty");
+  Future<void> _loadSong() async {
+    try {
+      await _audioPlayer.setAsset(widget.song['filePath']!);
+    } catch (e) {
+      print("Error loading audio source: $e");
     }
   }
 
@@ -57,178 +44,131 @@ class _SongPlayerState extends State<SongPlayer> {
     super.dispose();
   }
 
-  Future<void> _loadSong(String path) async {
-    if (path.startsWith('assets/')) {
-      // Load from assets if it's an asset path
-      await _audioPlayer.setSourceAsset(path);
-    } else {
-      // Otherwise, treat it as a URL
-      await _audioPlayer.setSourceUrl(path);
-    }
+  void _togglePlayPause() {
     setState(() {
-      isPlaying = true;
+      if (_isPlaying) {
+        _audioPlayer.pause();
+      } else {
+        _audioPlayer.play();
+      }
+      _isPlaying = !_isPlaying;
     });
   }
 
-  Future<void> _playPauseAudio() async {
-    if (isPlaying) {
-      await _audioPlayer.pause();
-    } else {
-      await _audioPlayer.resume();
-    }
+  void _toggleShuffle() {
     setState(() {
-      isPlaying = !isPlaying;
+      _isShuffleEnabled = !_isShuffleEnabled;
+      _audioPlayer.setShuffleModeEnabled(_isShuffleEnabled);
     });
   }
 
-  Future<void> _skipForward() async {
-    await _audioPlayer.seek(currentPosition + const Duration(seconds: 10));
-  }
-
-  Future<void> _skipBackward() async {
-    await _audioPlayer.seek(currentPosition - const Duration(seconds: 10));
-  }
-
-  Future<void> _nextSong() async {
-    if (currentSongIndex < widget.songQueue.length - 1) {
-      currentSongIndex++;
-      await _loadSong(widget.songQueue[currentSongIndex]);
-    }
-  }
-
-  Future<void> _previousSong() async {
-    if (currentSongIndex > 0) {
-      currentSongIndex--;
-      await _loadSong(widget.songQueue[currentSongIndex]);
-    }
-  }
-
-  void _toggleFavorite() {
+  void _toggleLoop() {
     setState(() {
-      isFavorite = !isFavorite;
-      // Save to local storage here if needed
+      _isLoopEnabled = !_isLoopEnabled;
+      _audioPlayer.setLoopMode(_isLoopEnabled ? LoopMode.one : LoopMode.off);
     });
   }
 
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
+  void _playNext() {
+    // Handle play next functionality if using a playlist
+  }
+
+  void _playPrevious() {
+    // Handle play previous functionality if using a playlist
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.songTitle,
-          style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.green,
-        actions: [
-          IconButton(
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-            onPressed: _toggleFavorite,
-          ),
-        ],
+        title: Text(widget.song['title'] ?? 'Now Playing'),
+        backgroundColor: Colors.deepPurpleAccent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+        padding: EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Song Cover
-            Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                image: DecorationImage(
-                  image: AssetImage(widget.imagePath),
+            SizedBox(height: 30),
+            // Song Image
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset(
+                  widget.song['image']!,
+                  width: 300,
+                  height: 300,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            const SizedBox(height: 30),
-
-            // Equalizer Placeholder
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Equalizer', style: TextStyle(color: Colors.grey[600])),
-                const SizedBox(width: 10),
-                Icon(Icons.equalizer, color: Colors.green),
-              ],
+            SizedBox(height: 30),
+            // Song Title
+            Text(
+              widget.song['title'] ?? 'Song Title',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
-
-            // Progress and Seekbar
-            Slider(
-              min: 0,
-              max: songDuration.inSeconds.toDouble(),
-              value: currentPosition.inSeconds
-                  .toDouble()
-                  .clamp(0, songDuration.inSeconds.toDouble()),
-              onChanged: (value) {
-                _audioPlayer.seek(Duration(seconds: value.toInt()));
-              },
-              activeColor: Colors.green,
-              inactiveColor: Colors.grey[300],
+            SizedBox(height: 10),
+            // Song Artist
+            Text(
+              widget.song['artist'] ?? 'Artist Name',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
             ),
-
-            // Current Time / Duration
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(_formatDuration(currentPosition),
-                    style: TextStyle(color: Colors.grey[700])),
-                Text(_formatDuration(songDuration),
-                    style: TextStyle(color: Colors.grey[700])),
-              ],
-            ),
-            const SizedBox(height: 30),
-
-            // Playback Controls
+            SizedBox(height: 30),
+            // Audio Player Controls
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.skip_previous),
-                  iconSize: 50,
-                  color: Colors.green,
-                  onPressed: _previousSong,
+                  icon: Icon(Icons.skip_previous),
+                  iconSize: 48,
+                  onPressed: _playPrevious,
                 ),
                 IconButton(
-                  icon: const Icon(Icons.replay_10),
-                  iconSize: 50,
-                  color: Colors.green,
-                  onPressed: _skipBackward,
+                  icon: Icon(_isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled),
+                  iconSize: 72,
+                  color: Colors.deepPurpleAccent,
+                  onPressed: _togglePlayPause,
                 ),
-                InkWell(
-                  onTap: _playPauseAudio,
-                  child: CircleAvatar(
-                    radius: 35,
-                    backgroundColor: Colors.green,
-                    child: Icon(
-                      isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: 45,
-                      color: Colors.white,
-                    ),
+                IconButton(
+                  icon: Icon(Icons.skip_next),
+                  iconSize: 48,
+                  onPressed: _playNext,
+                ),
+              ],
+            ),
+            SizedBox(height: 30),
+            // Shuffle, Loop, and Equalizer Controls
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.shuffle,
+                    color: _isShuffleEnabled ? Colors.deepPurpleAccent : Colors.grey,
                   ),
+                  onPressed: _toggleShuffle,
                 ),
                 IconButton(
-                  icon: const Icon(Icons.forward_10),
-                  iconSize: 50,
-                  color: Colors.green,
-                  onPressed: _skipForward,
+                  icon: Icon(
+                    Icons.repeat,
+                    color: _isLoopEnabled ? Colors.deepPurpleAccent : Colors.grey,
+                  ),
+                  onPressed: _toggleLoop,
                 ),
                 IconButton(
-                  icon: const Icon(Icons.skip_next),
-                  iconSize: 50,
-                  color: Colors.green,
-                  onPressed: _nextSong,
+                  icon: Icon(Icons.equalizer),
+                  color: Colors.grey,
+                  onPressed: () {
+                    // You can add an equalizer or audio settings here
+                  },
                 ),
               ],
             ),
