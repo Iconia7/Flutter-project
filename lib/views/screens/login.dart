@@ -30,7 +30,7 @@ class _LoginState extends State<Login> {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/images/background.jpeg',
+              'assets/images/background.jpg',
               fit: BoxFit.cover,
             ),
           ),
