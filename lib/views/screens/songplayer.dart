@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:project/views/widgets/audioplayermanager.dart';  // Import your AudioPlayerManager
 
 class SongPlayerScreen extends StatefulWidget {
   final Map<String, String> song;
   final List<Map<String, String>> playlist;
 
-  const SongPlayerScreen(
-      {super.key, required this.song, required this.playlist});
+  const SongPlayerScreen({super.key, required this.song, required this.playlist});
 
   @override
   _SongPlayerScreenState createState() => _SongPlayerScreenState();
@@ -43,8 +43,16 @@ class _SongPlayerScreenState extends State<SongPlayerScreen> {
   }
 
   Future<void> _loadSong() async {
+    final currentSong = widget.playlist[_currentIndex];
+
+    // Update the current song details in AudioPlayerManager
+    AudioPlayerManager().currentSong = {
+      'title': currentSong['title'] ?? 'Unknown Title',
+      'image': currentSong['image'] ?? 'assets/images/default_image.png',
+    };
+
     try {
-      await _audioPlayer.setAsset(widget.playlist[_currentIndex]['filePath']!);
+      await _audioPlayer.setAsset(currentSong['filePath']!);
       _audioPlayer.play();
       setState(() => _isPlaying = true);
     } catch (e) {

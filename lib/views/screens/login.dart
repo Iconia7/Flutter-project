@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:project/controller/logincontroller.dart';
 import 'package:project/views/widgets/textfield.dart';
 // ignore: depend_on_referenced_packages
@@ -133,7 +136,7 @@ class _LoginState extends State<Login> {
                                 _showValidationDialog(context,
                                     "Please enter a Password", _passwordKey);
                               } else {
-                                Get.toNamed("/home");
+                                remoteLogin();
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -213,6 +216,27 @@ class _LoginState extends State<Login> {
         ],
       ),
     );
+  }
+
+  Future<void> remoteLogin() async {
+    http.Response response;
+    response = await http.get(Uri.parse(
+        "http://10.5.39.115/musicapp/login.php?Username=${name.text.trim()}&Password=${pass.text.trim()}"));
+    if (response.statusCode == 200) {
+      var serverResponse = json.decode(response.body);
+      int loginStatus = serverResponse['success'];
+      if (loginStatus == 1) {
+        Get.toNamed("/home");
+      } else {
+        _showValidationDialog(
+            // ignore: use_build_context_synchronously
+            context,
+            "Wrong Username or Password",
+            _usernameKey);
+      }
+    } else {
+      print("Server Error ${response.statusCode}");
+    }
   }
 
   void _showValidationDialog(

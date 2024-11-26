@@ -1,14 +1,37 @@
 import 'package:flutter/material.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  final bool isDarkMode; // Initial dark mode state
+  final ValueChanged<bool> onThemeChanged; // Callback to notify theme change
+
+  const ProfileScreen({
+    super.key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+  });
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late bool _isDarkMode; // Local state for dark mode
+  bool _isNotificationsEnabled = true; // Tracks Notifications state
+  String _name = "Newton Mwangi";
+  String _email = "mwanginewton239@gmail.com";
+
+  @override
+  void initState() {
+    super.initState();
+    _isDarkMode = widget.isDarkMode; // Initialize with the parent's state
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
-        backgroundColor: Colors.deepPurpleAccent,
+        title: const Text("Profile"),
+        backgroundColor: _isDarkMode ? Colors.grey[850] : Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -18,99 +41,92 @@ class ProfileScreen extends StatelessWidget {
             // Profile Picture and Edit Button
             Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 50,
                   backgroundImage: AssetImage('assets/images/logo.jpeg'),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Newton Mwangi", // Replace with actual user's name
-                      style: TextStyle(
+                      _name,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(
-                      "mwanginewton239@gmail.com", // Replace with actual email
-                      style: TextStyle(
+                      _email,
+                      style: const TextStyle(
                         fontSize: 16,
                         color: Colors.grey,
                       ),
                     ),
                   ],
                 ),
-                Spacer(),
+                const Spacer(),
                 IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    // Handle edit profile logic
-                  },
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => _showEditProfileDialog(context),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            // Section: Account Settings
-            Text(
+            // Account Settings Section
+            const Text(
               "Account Settings",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ListTile(
-              title: Text("Change Email"),
-              trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                // Handle changing email logic
-              },
+              title: const Text("Change Email"),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () => _showChangeEmailDialog(context),
             ),
             ListTile(
-              title: Text("Change Password"),
-              trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                // Handle changing password logic
-              },
+              title: const Text("Change Password"),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () => _showInfoDialog(
+                  context, "Change Password", "Feature under development!"),
             ),
             ListTile(
-              title: Text("Log Out"),
-              trailing: Icon(Icons.exit_to_app),
-              onTap: () {
-                // Handle log out logic
-                _logOut(context);
-              },
+              title: const Text("Log Out"),
+              trailing: const Icon(Icons.exit_to_app),
+              onTap: () => _logOut(context),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            // Section: App Settings
-            Text(
+            // App Settings Section
+            const Text(
               "App Settings",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ListTile(
-              title: Text("Notifications"),
+              title: const Text("Notifications"),
               trailing: Switch(
-                value: true, // Replace with actual value for notifications status
+                value: _isNotificationsEnabled,
                 onChanged: (value) {
-                  // Handle toggle notifications setting
+                  setState(() => _isNotificationsEnabled = value);
                 },
               ),
             ),
             ListTile(
-              title: Text("Dark Mode"),
+              title: const Text("Dark Mode"),
               trailing: Switch(
-                value: false, // Replace with actual value for dark mode
+                value: _isDarkMode,
                 onChanged: (value) {
-                  // Handle toggle dark mode setting
+                  setState(() => _isDarkMode = value);
+                  widget.onThemeChanged(value); // Notify the parent
                 },
               ),
             ),
@@ -120,9 +136,98 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  // Show a dialog to edit profile name and email
+  void _showEditProfileDialog(BuildContext context) {
+    final nameController = TextEditingController(text: _name);
+    final emailController = TextEditingController(text: _email);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Edit Profile"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: "Name"),
+            ),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: "Email"),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _name = nameController.text;
+                _email = emailController.text;
+              });
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Show a dialog to change email
+  void _showChangeEmailDialog(BuildContext context) {
+    final emailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Change Email"),
+        content: TextField(
+          controller: emailController,
+          decoration: const InputDecoration(labelText: "New Email"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _email = emailController.text;
+              });
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Shows a general informational dialog
+  void _showInfoDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Logs out the user
   void _logOut(BuildContext context) {
-    // Perform logout logic here, like clearing user data or navigating to the login screen
-    // For now, we just navigate back to the login screen:
     Navigator.pushReplacementNamed(context, '/login');
   }
 }

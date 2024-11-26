@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:project/controller/signupcontroller.dart';
 import 'package:project/views/widgets/textfield.dart';
 // ignore: depend_on_referenced_packages
@@ -125,7 +128,7 @@ class Signup extends StatelessWidget {
                                 _showValidationDialog(context,
                                     "Passwords do not match", _passwordKey);
                               } else {
-                                Get.toNamed("/home");
+                                serverSignup();
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -145,7 +148,8 @@ class Signup extends StatelessWidget {
                                   GoogleFonts.notoSerif(color: Colors.black)),
                           TextButton(
                             child: Text("Login",
-                                style: GoogleFonts.notoSerif(fontWeight: FontWeight.w600,
+                                style: GoogleFonts.notoSerif(
+                                    fontWeight: FontWeight.w600,
                                     color: const Color.fromARGB(
                                         255, 1, 140, 187))),
                             onPressed: () {
@@ -164,6 +168,28 @@ class Signup extends StatelessWidget {
         ),
       ]),
     );
+  }
+
+  Future<void> serverSignup() async {
+    http.Response response;
+    var body = {
+      'Username': user.text.trim(),
+      'Email': email.text.trim(),
+      'Password': pass.text.trim(),
+      'Cpassword': cpass.text.trim(),
+    };
+    response = await http.post(
+        Uri.parse("http://10.5.39.115/musicapp/register.php"),
+        body: body);
+    if (response.statusCode == 200) {
+      var serverResponse = json.decode(response.body);
+      int signUpStatus = serverResponse['success'];
+      if (signUpStatus == 1) {
+        Get.offAndToNamed("/login");
+      }
+    } else {
+      print("Server Error ${response.statusCode}");
+    }
   }
 
   void _showValidationDialog(

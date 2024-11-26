@@ -1,8 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:project/views/screens/songplayer.dart';
+import 'package:project/views/widgets/recent.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  _DashboardScreenState createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
   final List<Map<String, String>> carouselImages = [
     {
       'image': 'assets/images/Album 1.jpeg',
@@ -21,31 +29,8 @@ class DashboardScreen extends StatelessWidget {
     },
     {
       'image': 'assets/images/kifo.jpg',
-      'filePath': 'assets/audio/kifo cha mende.mp3',
+      'filePath': 'assets/audio/kifo.mp3',
       'title': 'Iyani Song',
-    },
-  ];
-
-  final List<Map<String, String>> recentlyPlayed = [
-    {
-      'title': 'Rewrite The Stars',
-      'image': 'assets/images/stars.jpg',
-      'filePath': 'assets/audio/rewrite the stars.mp3',
-    },
-    {
-      'title': 'Jitu',
-      'image': 'assets/images/Jitu.jpeg',
-      'filePath': 'assets/audio/jitu.mp3',
-    },
-    {
-      'title': 'Busy',
-      'image': 'assets/images/Album 1.jpeg',
-      'filePath': 'assets/audio/busy.mp3',
-    },
-    {
-      'title': 'Let Me Love You',
-      'image': 'assets/images/let.jpeg',
-      'filePath': 'assets/audio/let me love you.mp3',
     },
   ];
 
@@ -80,7 +65,7 @@ class DashboardScreen extends StatelessWidget {
     {
       'title': 'Kifo Cha Mende',
       'image': 'assets/images/kifo.jpg',
-      'filePath': 'assets/audio/kifo cha mende.mp3',
+      'filePath': 'assets/audio/kifo.mp3',
     },
     {
       'title': 'Kudade',
@@ -98,8 +83,6 @@ class DashboardScreen extends StatelessWidget {
       'filePath': 'assets/audio/like you.mp3',
     },
   ];
-
-  DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -175,61 +158,13 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 20),
               // Recently Played Section
               _buildSectionTitle(context, "Recently Played"),
-              _buildHorizontalList(recentlyPlayed, context),
+              _buildDynamicRecentlyPlayed(context),
               const SizedBox(height: 20),
-
               // Playlists Section
               _buildSectionTitle(context, "Playlists"),
-              SizedBox(
-                height: 150,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: playlists.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SongPlayerScreen(
-                              song: playlists[index][0],
-                              playlist: playlists[index],
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 20),
-                        width: 120,
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                playlists[index][0]['image']!,
-                                fit: BoxFit.cover,
-                                height: 100,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'Playlist ${index + 1}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.white,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              _buildHorizontalList(playlists, context),
               const SizedBox(height: 20),
-
-              // Trending Songs Section (Vertical)
+              // Trending Songs Section
               _buildSectionTitle(context, "Trending Songs"),
               _buildVerticalList(trendingSongs, context),
               const SizedBox(height: 20),
@@ -254,23 +189,35 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Horizontal list for Recently Played
-  SizedBox _buildHorizontalList(
-      List<Map<String, String>> list, BuildContext context) {
+  // Dynamically built Recently Played list
+  Widget _buildDynamicRecentlyPlayed(BuildContext context) {
+    final recentlyPlayed = RecentlyPlayedManager().recentlyPlayed;
+
+    if (recentlyPlayed.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Text(
+          "No songs played yet.",
+          style: TextStyle(color: Colors.white),
+        ),
+      );
+    }
+
     return SizedBox(
-      height: 120,
+      height: 140,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: list.length,
+        itemCount: recentlyPlayed.length,
         itemBuilder: (context, index) {
+          final song = recentlyPlayed[index];
           return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => SongPlayerScreen(
-                    song: list[index],
-                    playlist: list,
+                    song: song,
+                    playlist: recentlyPlayed,
                   ),
                 ),
               );
@@ -278,19 +225,24 @@ class DashboardScreen extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(left: 20),
               width: 100,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(15),
+              ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.asset(
-                      list[index]['image']!,
+                      song['image']!,
                       fit: BoxFit.cover,
                       height: 80,
                     ),
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    list[index]['title']!,
+                    song['title']!,
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.white,
@@ -306,51 +258,48 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Vertical list for Trending Songs
-  SizedBox _buildVerticalList(
-      List<Map<String, String>> list, BuildContext context) {
+  Widget _buildHorizontalList(
+      List<List<Map<String, String>>> list, BuildContext context) {
     return SizedBox(
-      height: 250, // Adjust height as needed for the vertical list
+      height: 150,
       child: ListView.builder(
-        scrollDirection: Axis.vertical,
+        scrollDirection: Axis.horizontal,
         itemCount: list.length,
         itemBuilder: (context, index) {
+          final playlist = list[index];
           return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => SongPlayerScreen(
-                    song: list[index],
-                    playlist: list,
+                    song: playlist[0],
+                    playlist: playlist,
                   ),
                 ),
               );
             },
             child: Container(
-              margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-              height: 70, // Adjust the height of each list item
-              child: Row(
+              margin: const EdgeInsets.only(left: 20),
+              width: 120,
+              child: Column(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.asset(
-                      list[index]['image']!,
+                      playlist[0]['image']!,
                       fit: BoxFit.cover,
-                      height: 60,
-                      width: 60,
+                      height: 100,
                     ),
                   ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: Text(
-                      list[index]['title']!,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 5),
+                  Text(
+                    'Playlist ${index + 1}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -358,6 +307,53 @@ class DashboardScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildVerticalList(
+      List<Map<String, String>> list, BuildContext context) {
+    return Column(
+      children: list.map((song) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SongPlayerScreen(
+                  song: song,
+                  playlist: list,
+                ),
+              ),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  song['image']!,
+                  fit: BoxFit.cover,
+                  height: 50,
+                  width: 50,
+                ),
+              ),
+              title: Text(
+                song['title']!,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
