@@ -1,43 +1,40 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:project/controller/signupcontroller.dart';
 import 'package:project/views/widgets/textfield.dart';
-// ignore: depend_on_referenced_packages
 import 'package:google_fonts/google_fonts.dart';
 
-TextEditingController fname = TextEditingController();
-TextEditingController lname = TextEditingController();
-TextEditingController email = TextEditingController();
-TextEditingController pass = TextEditingController();
-TextEditingController cpass = TextEditingController();
 TextEditingController user = TextEditingController();
-SignupController signupController = Get.put(SignupController());
+TextEditingController pass = TextEditingController();
+TextEditingController email = TextEditingController();
+TextEditingController cpass = TextEditingController();
 
-class Signup extends StatelessWidget {
-  Signup({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
 
-  final GlobalKey _usernameKey = GlobalKey();
-  final GlobalKey _emailKey = GlobalKey();
-  final GlobalKey _passwordKey = GlobalKey();
-  final GlobalKey _confirmPasswordKey = GlobalKey();
+  @override
+  _SignupState createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(children: [
-        Positioned.fill(
-          child: Image.asset(
-            'assets/images/background.jpg',
-            fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/background.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(30),
-            child: Container(
+          Padding(
+            padding: const EdgeInsets.all(40),
+            child: Center(
+              child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -54,92 +51,81 @@ class Signup extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       const CircleAvatar(
                         backgroundImage: AssetImage("assets/images/logo.jpeg"),
                         radius: 70,
                       ),
-                      const SizedBox(
-                        height: 20,
+                      const SizedBox(height: 20),
+                      Text(
+                        "Sign Up",
+                        style: GoogleFonts.notoSerif(
+                            fontSize: 27, fontWeight: FontWeight.bold),
                       ),
-                      Text("Welcome",
-                          style: GoogleFonts.notoSerif(
-                              fontSize: 27, fontWeight: FontWeight.bold)),
-                      const SizedBox(
-                        height: 20,
+                      const SizedBox(height: 20),
+                      MyTextField(
+                        controller: user,
+                        hint: "Username",
+                        icon: Icons.person,
+                      ),
+                      const SizedBox(height: 20),
+                      MyTextField(
+                        controller: email,
+                        hint: "Email",
+                        icon: Icons.email,
+                      ),
+                      const SizedBox(height: 20),
+                      MyTextField(
+                        controller: pass,
+                        hint: "Password",
+                        icon: Icons.lock,
+                        isPassword: true,
                       ),
                       MyTextField(
-                          key: _usernameKey,
-                          controller: user,
-                          hint: "Enter a Username",
-                          icon: Icons.person),
-                      const SizedBox(
-                        height: 20,
+                        controller: cpass,
+                        hint: "Confirm Password",
+                        icon: Icons.lock,
+                        isPassword: true,
                       ),
-                      MyTextField(
-                          key: _emailKey,
-                          controller: email,
-                          hint: "Enter your Email Address",
-                          icon: Icons.email),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      MyTextField(
-                          key: _passwordKey,
-                          controller: pass,
-                          hint: "Password",
-                          icon: Icons.lock,
-                          isPassword: true),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      MyTextField(
-                          key: _confirmPasswordKey,
-                          controller: cpass,
-                          colour: Colors.grey,
-                          hint: "Confirm Password",
-                          icon: Icons.lock,
-                          isPassword: true),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       SizedBox(
                         width: 250,
                         height: 50,
                         child: ElevatedButton(
-                            onPressed: () {
-                              if (user.text.isEmpty) {
-                                _showValidationDialog(context,
-                                    "Please enter a Username", _usernameKey);
-                              } else if (email.text.isEmpty) {
-                                _showValidationDialog(context,
-                                    "Please enter an Email", _emailKey);
-                              } else if (pass.text.isEmpty) {
-                                _showValidationDialog(context,
-                                    "Please enter a Password", _passwordKey);
-                              } else if (cpass.text.isEmpty) {
-                                _showValidationDialog(
-                                    context,
-                                    "Please confirm your Password",
-                                    _confirmPasswordKey);
-                              } else if (pass.text != cpass.text) {
-                                _showValidationDialog(context,
-                                    "Passwords do not match", _passwordKey);
-                              } else {
-                                serverSignup();
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromARGB(255, 1, 152, 223),
-                                foregroundColor: Colors.white),
-                            child: Text("Register",
-                                style: GoogleFonts.notoSerif(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold))),
+                          onPressed: isLoading
+                              ? null
+                              : () {
+                                  if (user.text.isEmpty ||
+                                      email.text.isEmpty ||
+                                      pass.text.isEmpty ||
+                                      cpass.text.isEmpty) {
+                                    Get.snackbar(
+                                        "Error", "All fields are required.",
+                                        snackPosition: SnackPosition.BOTTOM,
+                                        backgroundColor: Colors.redAccent,
+                                        colorText: Colors.white);
+                                  } else {
+                                    serverSignup();
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 1, 152, 223),
+                            foregroundColor: Colors.white,
+                          ),
+                          child: isLoading
+                              ? const CircularProgressIndicator(
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(Colors.lightBlue),
+                                )
+                          :Text(
+                            "Signup",
+                            style: GoogleFonts.notoSerif(
+                                fontSize: 25, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -158,76 +144,58 @@ class Signup extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20,
-                      )
                     ],
                   ),
-                )),
+                ),
+              ),
+            ),
           ),
-        ),
-      ]),
+          
+        ],
+      ),
     );
   }
 
   Future<void> serverSignup() async {
-    http.Response response;
-    var body = {
-      'Username': user.text.trim(),
-      'Email': email.text.trim(),
-      'Password': pass.text.trim(),
-      'Cpassword': cpass.text.trim(),
-    };
-    response = await http.post(
-        Uri.parse("http://10.5.39.115/musicapp/register.php"),
-        body: body);
-    if (response.statusCode == 200) {
-      var serverResponse = json.decode(response.body);
-      int signUpStatus = serverResponse['success'];
-      if (signUpStatus == 1) {
-        Get.offAndToNamed("/login");
-      }
-    } else {
-      print("Server Error ${response.statusCode}");
-    }
-  }
-
-  void _showValidationDialog(
-      BuildContext context, String message, GlobalKey key) {
-    final overlay = Overlay.of(context);
-
-    final overlayEntry = OverlayEntry(
-      builder: (context) {
-        final renderBox = key.currentContext?.findRenderObject() as RenderBox?;
-        final offset = renderBox?.localToGlobal(Offset.zero) ?? Offset.zero;
-
-        return Positioned(
-          left: offset.dx,
-          top: offset.dy - 50, // Position it above the text field
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                message,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-
-    // Insert the OverlayEntry into the Overlay
-    overlay.insert(overlayEntry);
-
-    // Remove the overlay after a delay
-    Future.delayed(const Duration(seconds: 2), () {
-      overlayEntry.remove();
+    setState(() {
+      isLoading = true;
     });
+
+    try {
+      http.Response response = await http.post(
+        Uri.parse("http://192.168.137.156/musicapp/register.php"),
+        body: {
+          "Username": user.text.trim(),
+          "Email": email.text.trim(),
+          "Password": pass.text.trim(),
+          "Cpassword": cpass.text.trim(),
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var serverResponse = json.decode(response.body);
+        int success = serverResponse['success'];
+        if (success == 1) {
+          Get.snackbar("Success", "Signup successful!",
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.lightBlueAccent,
+              colorText: Colors.white);
+          Get.toNamed("/login");
+        } else {
+          Get.snackbar("Error", "Signup failed!",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.redAccent,
+              colorText: Colors.white);
+        }
+      } else {
+        print("Server Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 }

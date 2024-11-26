@@ -29,7 +29,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
     } else {
       // Show a message if permission is denied
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Storage permission is required to access songs.')),
+        const SnackBar(
+            content: Text('Storage permission is required to access songs.')),
       );
     }
   }
@@ -37,7 +38,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
   /// Loads songs from the "Music" directory.
   Future<void> _loadSongs() async {
     try {
-      final directories = await getExternalStorageDirectories(type: StorageDirectory.music);
+      final directories =
+          await getExternalStorageDirectories(type: StorageDirectory.music);
       if (directories == null || directories.isEmpty) {
         debugPrint('No accessible music directories found.');
         return;
@@ -46,7 +48,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
       // Access the first music directory found
       final musicDirectory = directories.first;
       final songsDir = Directory(musicDirectory.path);
-      final files = songsDir.listSync().where((file) => file.path.endsWith('.mp3'));
+      final files =
+          songsDir.listSync().where((file) => file.path.endsWith('.mp3'));
 
       setState(() {
         _songs = files.toList();
@@ -54,13 +57,15 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
       if (_songs.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No MP3 files found in the Music directory.')),
+          const SnackBar(
+              content: Text('No MP3 files found in the Music directory.')),
         );
       }
     } catch (e) {
       debugPrint('Error loading songs: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load songs. Please try again.')),
+        const SnackBar(
+            content: Text('Failed to load songs. Please try again.')),
       );
     }
   }
@@ -111,5 +116,3 @@ class _LibraryScreenState extends State<LibraryScreen> {
     super.dispose();
   }
 }
-
-

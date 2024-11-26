@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:project/controller/logincontroller.dart';
 import 'package:project/views/widgets/textfield.dart';
-// ignore: depend_on_referenced_packages
 import 'package:google_fonts/google_fonts.dart';
 
 TextEditingController name = TextEditingController();
@@ -16,15 +14,14 @@ class Login extends StatefulWidget {
   const Login({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
   final GlobalKey _usernameKey = GlobalKey();
   final GlobalKey _passwordKey = GlobalKey();
-
   bool rememberMe = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +79,6 @@ class _LoginState extends State<Login> {
                           icon: Icons.lock,
                           isPassword: true),
                       const SizedBox(height: 1),
-
-                      // Row for Remember Me Checkbox and Forgot Password Button
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 35),
                         child: Row(
@@ -122,31 +117,41 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 5),
                       SizedBox(
                         width: 250,
                         height: 50,
                         child: ElevatedButton(
-                            onPressed: () {
-                              if (name.text.isEmpty) {
-                                _showValidationDialog(context,
-                                    "Please enter a Username", _usernameKey);
-                              } else if (pass.text.isEmpty) {
-                                _showValidationDialog(context,
-                                    "Please enter a Password", _passwordKey);
-                              } else {
-                                remoteLogin();
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromARGB(255, 1, 152, 223),
-                                foregroundColor: Colors.white),
-                            child: Text("Login",
-                                style: GoogleFonts.notoSerif(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold))),
+                          onPressed: isLoading
+                              ? null
+                              : () {
+                                  if (name.text.isEmpty) {
+                                    _showValidationDialog(
+                                        context,
+                                        "Please enter a Username",
+                                        _usernameKey);
+                                  } else if (pass.text.isEmpty) {
+                                    _showValidationDialog(
+                                        context,
+                                        "Please enter a Password",
+                                        _passwordKey);
+                                  } else {
+                                    remoteLogin();
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 1, 152, 223),
+                              foregroundColor: Colors.white),
+                          child: isLoading
+                              ? const CircularProgressIndicator(
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(Colors.lightBlue),
+                                )
+                          :Text("Login",
+                              style: GoogleFonts.notoSerif(
+                                  fontSize: 25, fontWeight: FontWeight.bold)),
+                        ),
                       ),
                       const SizedBox(height: 7),
                       Text(
@@ -213,29 +218,39 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
+          
         ],
       ),
     );
   }
 
   Future<void> remoteLogin() async {
-    http.Response response;
-    response = await http.get(Uri.parse(
-        "http://10.5.39.115/musicapp/login.php?Username=${name.text.trim()}&Password=${pass.text.trim()}"));
-    if (response.statusCode == 200) {
-      var serverResponse = json.decode(response.body);
-      int loginStatus = serverResponse['success'];
-      if (loginStatus == 1) {
-        Get.toNamed("/home");
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      http.Response response = await http.get(Uri.parse(
+          "http://192.168.137.156/musicapp/login.php?Username=${name.text.trim()}&Password=${pass.text.trim()}"));
+
+      if (response.statusCode == 200) {
+        var serverResponse = json.decode(response.body);
+        int loginStatus = serverResponse['success'];
+        if (loginStatus == 1) {
+          Get.toNamed("/home");
+        } else {
+          _showValidationDialog(
+              context, "Wrong Username or Password", _usernameKey);
+        }
       } else {
-        _showValidationDialog(
-            // ignore: use_build_context_synchronously
-            context,
-            "Wrong Username or Password",
-            _usernameKey);
+        print("Server Error ${response.statusCode}");
       }
-    } else {
-      print("Server Error ${response.statusCode}");
+    } catch (e) {
+      print("Error: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -250,19 +265,18 @@ class _LoginState extends State<Login> {
 
         return Positioned(
           left: offset.dx,
-          top: offset.dy - 50, // Position it above the text field
+          top: offset.dy - 50,
           child: Material(
             color: Colors.transparent,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 70, 66, 66),
+                color: Colors.black,
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Text(
                 message,
-                style:
-                    const TextStyle(color: Color.fromARGB(255, 253, 252, 252)),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ),
@@ -270,10 +284,8 @@ class _LoginState extends State<Login> {
       },
     );
 
-    // Insert the OverlayEntry into the Overlay
     overlay.insert(overlayEntry);
 
-    // Remove the overlay after a delay
     Future.delayed(const Duration(seconds: 2), () {
       overlayEntry.remove();
     });
