@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:project/views/widgets/recent.dart';
+//import 'package:project/views/widgets/recent.dart';
 
 class MiniPlayer extends StatelessWidget {
   final AudioPlayer audioPlayer;
@@ -71,13 +71,12 @@ class MiniPlayer extends StatelessWidget {
                 );
               },
             ),
-            onPressed: () {
+            onPressed: () async {
               if (audioPlayer.playing) {
-                audioPlayer.pause();
+                await audioPlayer.pause();
               } else {
-                audioPlayer.play();
-                // Add the song to Recently Played
-                RecentlyPlayedManager().addSong(songTitle, songImage);
+                await audioPlayer.play();
+                //RecentlyPlayedManager().addSong(song);
               }
             },
           ),

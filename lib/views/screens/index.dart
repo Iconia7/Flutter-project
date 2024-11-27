@@ -111,6 +111,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 items: carouselImages.map((song) {
                   return GestureDetector(
                     onTap: () {
+                      RecentlyPlayedManager().addSong(song); // Add to recently played
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -316,6 +317,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: list.map((song) {
         return GestureDetector(
           onTap: () {
+            RecentlyPlayedManager().addSong(song); // Add to recently played
             Navigator.push(
               context,
               MaterialPageRoute(
