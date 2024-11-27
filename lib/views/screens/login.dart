@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:project/controller/logincontroller.dart';
 import 'package:project/views/widgets/textfield.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 TextEditingController name = TextEditingController();
 TextEditingController pass = TextEditingController();
@@ -22,6 +23,24 @@ class _LoginState extends State<Login> {
   final GlobalKey _passwordKey = GlobalKey();
   bool rememberMe = false;
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSavedLogin();
+  }
+
+  /// Check if user has previously logged in successfully
+  Future<void> _checkSavedLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedUsername = prefs.getString('savedUsername');
+    String? savedPassword = prefs.getString('savedPassword');
+
+    if (savedUsername != null && savedPassword != null) {
+      // If saved credentials are found, navigate to home
+      Get.toNamed("/home");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,12 +164,13 @@ class _LoginState extends State<Login> {
                               foregroundColor: Colors.white),
                           child: isLoading
                               ? const CircularProgressIndicator(
-                                  valueColor:
-                                      AlwaysStoppedAnimation<Color>(Colors.lightBlue),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.lightBlue),
                                 )
-                          :Text("Login",
-                              style: GoogleFonts.notoSerif(
-                                  fontSize: 25, fontWeight: FontWeight.bold)),
+                              : Text("Login",
+                                  style: GoogleFonts.notoSerif(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold)),
                         ),
                       ),
                       const SizedBox(height: 7),
@@ -218,12 +238,12 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
-          
         ],
       ),
     );
   }
 
+  /// Logs the user in and saves credentials if successful.
   Future<void> remoteLogin() async {
     setState(() {
       isLoading = true;
@@ -231,12 +251,18 @@ class _LoginState extends State<Login> {
 
     try {
       http.Response response = await http.get(Uri.parse(
-          "http://192.168.137.156/musicapp/login.php?Username=${name.text.trim()}&Password=${pass.text.trim()}"));
+          "http://10.5.39.115/musicapp/login.php?Username=${name.text.trim()}&Password=${pass.text.trim()}"));
 
       if (response.statusCode == 200) {
         var serverResponse = json.decode(response.body);
         int loginStatus = serverResponse['success'];
         if (loginStatus == 1) {
+          if (rememberMe) {
+            // Save username and password if "Remember Me" is checked
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setString('savedUsername', name.text.trim());
+            prefs.setString('savedPassword', pass.text.trim());
+          }
           Get.toNamed("/home");
         } else {
           _showValidationDialog(
@@ -254,6 +280,7 @@ class _LoginState extends State<Login> {
     }
   }
 
+  /// Shows a validation message near the specified field.
   void _showValidationDialog(
       BuildContext context, String message, GlobalKey key) {
     final overlay = Overlay.of(context);
@@ -291,3 +318,4 @@ class _LoginState extends State<Login> {
     });
   }
 }
+

@@ -4,6 +4,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
+import 'package:project/views/screens/songplayer.dart';
+
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
 
@@ -27,60 +29,76 @@ class _LibraryScreenState extends State<LibraryScreen> {
         await Permission.manageExternalStorage.request().isGranted) {
       await _loadSongs();
     } else {
-      // Show a message if permission is denied
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Storage permission is required to access songs.')),
+          content: Text('Storage permission is required to access songs.'),
+        ),
       );
     }
   }
 
-  /// Loads songs from the "Music" directory.
+  /// Loads MP3 songs from specified directories.
   Future<void> _loadSongs() async {
     try {
-      final directories =
-          await getExternalStorageDirectories(type: StorageDirectory.music);
-      if (directories == null || directories.isEmpty) {
-        debugPrint('No accessible music directories found.');
+      final directory = await getExternalStorageDirectory();
+
+      if (directory == null) {
+        debugPrint('No external storage directory found.');
         return;
       }
 
-      // Access the first music directory found
-      final musicDirectory = directories.first;
-      final songsDir = Directory(musicDirectory.path);
-      final files =
-          songsDir.listSync().where((file) => file.path.endsWith('.mp3'));
+      final musicPaths = [
+        "${directory.path}/music",
+        "/storage/emulated/0/music",
+        "/sdcard/Music",
+      ];
+
+      List<FileSystemEntity> files = [];
+
+      for (String path in musicPaths) {
+        final musicDir = Directory(path);
+        if (musicDir.existsSync()) {
+          files.addAll(musicDir
+              .listSync()
+              .where((file) => file.path.toLowerCase().endsWith('.mp3')));
+        }
+      }
 
       setState(() {
-        _songs = files.toList();
+        _songs = files;
       });
 
       if (_songs.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('No MP3 files found in the Music directory.')),
+            content: Text('No MP3 files found in the Music directories.'),
+          ),
         );
       }
     } catch (e) {
       debugPrint('Error loading songs: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Failed to load songs. Please try again.')),
+          content: Text('Failed to load songs. Please try again.'),
+        ),
       );
     }
   }
 
-  /// Plays the selected song.
-  Future<void> _playSong(String filePath) async {
-    try {
-      await _audioPlayer.setFilePath(filePath);
-      _audioPlayer.play();
-    } catch (e) {
-      debugPrint('Error playing song: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unable to play the selected song.')),
-      );
-    }
+  /// Generates a playlist for the song player.
+  List<Map<String, String>> _generatePlaylist() {
+    return _songs.map((song) {
+      return {
+        'title': song.path.split('/').last,
+        'filePath': song.path,
+        'image': 'assets/images/default_image.jpg',
+      };
+    }).toList();
+  }
+
+  /// Refreshes the song list.
+  Future<void> _refreshSongs() async {
+    await _loadSongs();
   }
 
   @override
@@ -88,24 +106,38 @@ class _LibraryScreenState extends State<LibraryScreen> {
     return Scaffold(
       body: _songs.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _songs.length,
-              itemBuilder: (context, index) {
-                final song = _songs[index];
-                return ListTile(
-                  leading: const Icon(
-                    Icons.music_note,
-                    color: Colors.brown,
-                    size: 40,
-                  ),
-                  title: Text(
-                    song.path.split('/').last,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onTap: () => _playSong(song.path),
-                );
-              },
+          : RefreshIndicator(
+              onRefresh: _refreshSongs,
+              child: ListView.builder(
+                itemCount: _songs.length,
+                itemBuilder: (context, index) {
+                  final song = _songs[index];
+                  return ListTile(
+                    leading: const Icon(
+                      Icons.music_note,
+                      color: Colors.brown,
+                      size: 40,
+                    ),
+                    title: Text(
+                      song.path.split('/').last,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    onTap: () {
+                      final playlist = _generatePlaylist();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SongPlayerScreen(
+                            song: playlist[index],
+                            playlist: playlist,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
     );
   }

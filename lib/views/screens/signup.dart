@@ -81,6 +81,7 @@ class _SignupState extends State<Signup> {
                         icon: Icons.lock,
                         isPassword: true,
                       ),
+                      const SizedBox(height: 20),
                       MyTextField(
                         controller: cpass,
                         hint: "Confirm Password",
@@ -115,14 +116,15 @@ class _SignupState extends State<Signup> {
                           ),
                           child: isLoading
                               ? const CircularProgressIndicator(
-                                  valueColor:
-                                      AlwaysStoppedAnimation<Color>(Colors.lightBlue),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.lightBlue),
                                 )
-                          :Text(
-                            "Signup",
-                            style: GoogleFonts.notoSerif(
-                                fontSize: 25, fontWeight: FontWeight.bold),
-                          ),
+                              : Text(
+                                  "Signup",
+                                  style: GoogleFonts.notoSerif(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -150,7 +152,6 @@ class _SignupState extends State<Signup> {
               ),
             ),
           ),
-          
         ],
       ),
     );
@@ -163,7 +164,7 @@ class _SignupState extends State<Signup> {
 
     try {
       http.Response response = await http.post(
-        Uri.parse("http://192.168.137.156/musicapp/register.php"),
+        Uri.parse("http://10.5.39.115/musicapp/register.php"),
         body: {
           "Username": user.text.trim(),
           "Email": email.text.trim(),
