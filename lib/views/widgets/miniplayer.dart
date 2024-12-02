@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-//import 'package:project/views/widgets/recent.dart';
 
 class MiniPlayer extends StatelessWidget {
   final AudioPlayer audioPlayer;
@@ -16,72 +15,48 @@ class MiniPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      child: Row(
-        children: [
-          // Song Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              songImage,
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(width: 10),
-          // Song Details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  songTitle,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+    return StreamBuilder<bool>(
+      stream: audioPlayer.playingStream,
+      builder: (context, snapshot) {
+        final isPlaying = snapshot.data ?? false;
+        return isPlaying
+            ? Container(
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.grey[800],
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                StreamBuilder<Duration>(
-                  stream: audioPlayer.positionStream,
-                  builder: (context, snapshot) {
-                    final position = snapshot.data ?? Duration.zero;
-                    return Text(
-                      "${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}",
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    );
-                  },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Image.asset(
+                          songImage,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      songTitle,
+                      style: const TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                      ),
+                      color: Colors.white,
+                      onPressed: () => audioPlayer.play(),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          // Play/Pause Button
-          IconButton(
-            icon: StreamBuilder<bool>(
-              stream: audioPlayer.playingStream,
-              builder: (context, snapshot) {
-                final isPlaying = snapshot.data ?? false;
-                return Icon(
-                  isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: Colors.blue,
-                );
-              },
-            ),
-            onPressed: () async {
-              if (audioPlayer.playing) {
-                await audioPlayer.pause();
-              } else {
-                await audioPlayer.play();
-                //RecentlyPlayedManager().addSong(song);
-              }
-            },
-          ),
-        ],
-      ),
+              )
+            : const SizedBox.shrink();
+      },
     );
   }
 }

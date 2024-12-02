@@ -49,6 +49,11 @@ dependencies:
   audio_session: ^0.1.21
   shared_preferences: ^2.3.3
   http: ^1.2.2
+  provider: ^6.1.2
+  youtube_explode_dart: ^2.3.6
+  html: ^0.15.5
+  webview_flutter: ^4.10.0
+  
   
   #audio_query: ^0.0.2
   sign_in_button: ^3.2.0

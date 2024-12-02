@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:project/views/widgets/textfield.dart';
+// ignore: depend_on_referenced_packages
 import 'package:google_fonts/google_fonts.dart';
 
 TextEditingController user = TextEditingController();
@@ -14,6 +15,7 @@ class Signup extends StatefulWidget {
   const Signup({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SignupState createState() => _SignupState();
 }
 
@@ -189,9 +191,11 @@ class _SignupState extends State<Signup> {
               colorText: Colors.white);
         }
       } else {
+        // ignore: avoid_print
         print("Server Error: ${response.statusCode}");
       }
     } catch (e) {
+      // ignore: avoid_print
       print("Error: $e");
     } finally {
       setState(() {

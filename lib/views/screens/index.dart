@@ -7,6 +7,7 @@ class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _DashboardScreenState createState() => _DashboardScreenState();
 }
 
@@ -38,13 +39,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     [
       {
         'title': 'Workout Hit 1',
-        'image': 'assets/images/Album 1.jpeg',
-        'filePath': 'assets/audio/busy.mp3',
+        'image': 'assets/images/see.jpeg',
+        'filePath': 'assets/audio/see you.mp3',
       },
       {
         'title': 'Workout Hit 2',
-        'image': 'assets/images/see.jpeg',
-        'filePath': 'assets/audio/see you.mp3',
+        'image': 'assets/images/Album 1.jpeg',
+        'filePath': 'assets/audio/busy.mp3',
       },
     ],
     [
@@ -103,7 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Carousel Slider
               CarouselSlider(
                 options: CarouselOptions(
-                  height: 220,
+                  height: 300,
                   autoPlay: true,
                   enlargeCenterPage: true,
                   enableInfiniteScroll: true,
@@ -310,6 +311,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
+  
 
   Widget _buildVerticalList(
       List<Map<String, String>> list, BuildContext context) {

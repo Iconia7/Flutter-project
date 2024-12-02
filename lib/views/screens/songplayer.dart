@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:project/views/widgets/miniplayer.dart';
+import 'package:http/http.dart' as http;
+import 'package:html/parser.dart';
+
 
 class SongPlayerScreen extends StatefulWidget {
   final Map<String, String> song;
@@ -10,11 +14,12 @@ class SongPlayerScreen extends StatefulWidget {
       {super.key, required this.song, required this.playlist});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SongPlayerScreenState createState() => _SongPlayerScreenState();
 }
 
 class _SongPlayerScreenState extends State<SongPlayerScreen> {
-  late AudioPlayer _audioPlayer;
+  late final AudioPlayer _audioPlayer;
   bool _isPlaying = false;
   bool _isShuffling = false;
   bool _isLooping = false;
@@ -44,10 +49,30 @@ class _SongPlayerScreenState extends State<SongPlayerScreen> {
 
   Future<void> _loadSong() async {
     final currentSong = widget.playlist[_currentIndex];
+    final songUrl = currentSong['url'];
     final filePath = currentSong['filePath'];
 
     try {
-      if (filePath != null) {
+      if (songUrl != null) {
+        // Fetch direct MP3 link from Tubidy (or similar search result)
+        final response = await http.get(Uri.parse(songUrl));
+        if (response.statusCode == 200) {
+          final document = parse(response.body);
+          final audioElement = document.querySelector('a[href*=".mp3"]');
+          final audioUrl = audioElement?.attributes['href'];
+
+          if (audioUrl != null) {
+            await _audioPlayer.setUrl(audioUrl);
+            _audioPlayer.play();
+            setState(() => _isPlaying = true);
+          } else {
+            debugPrint('Error: Audio URL not found');
+          }
+        } else {
+          debugPrint('Error: Failed to fetch song page');
+        }
+      } else if (filePath != null) {
+        // Handle loading from assets or device storage
         if (filePath.startsWith('assets/')) {
           await _audioPlayer.setAsset(filePath);
         } else {
@@ -56,10 +81,10 @@ class _SongPlayerScreenState extends State<SongPlayerScreen> {
         _audioPlayer.play();
         setState(() => _isPlaying = true);
       } else {
-        debugPrint('Error: File path is null for the current song.');
+        debugPrint('Error: No valid file path or URL found for the current song.');
       }
     } catch (e) {
-      debugPrint("Error loading audio source: $e");
+      debugPrint("Error loading song: $e");
     }
   }
 
@@ -134,15 +159,15 @@ class _SongPlayerScreenState extends State<SongPlayerScreen> {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 30),
+          const SizedBox(height: 150),
           // Song Image
           Center(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.asset(
                 currentSong['image'] ?? 'assets/images/default_image.png',
-                width: 300,
-                height: 300,
+                width: 400,
+                height: 400,
                 fit: BoxFit.cover,
               ),
             ),
@@ -173,13 +198,19 @@ class _SongPlayerScreenState extends State<SongPlayerScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              '${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}',
-                              style: const TextStyle(fontSize: 14),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 25),
+                              child: Text(
+                                '${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}',
+                                style: const TextStyle(fontSize: 14),
+                              ),
                             ),
-                            Text(
-                              '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}',
-                              style: const TextStyle(fontSize: 14),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 25),
+                              child: Text(
+                                '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                                style: const TextStyle(fontSize: 14),
+                              ),
                             ),
                           ],
                         ),
@@ -187,7 +218,7 @@ class _SongPlayerScreenState extends State<SongPlayerScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 0),
                 // Control Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -231,10 +262,19 @@ class _SongPlayerScreenState extends State<SongPlayerScreen> {
               ],
             ),
           ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: MiniPlayer(
+              audioPlayer: _audioPlayer,
+              songTitle: currentSong['title'] ?? '',
+              songImage: currentSong['image'] ?? '',
+            ),
+          ),
         ],
       ),
+      // MiniPlayer positioned at bottom
     );
   }
 }
-
-

@@ -10,6 +10,7 @@ class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LibraryScreenState createState() => _LibraryScreenState();
 }
 
@@ -29,6 +30,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
         await Permission.manageExternalStorage.request().isGranted) {
       await _loadSongs();
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Storage permission is required to access songs.'),
@@ -69,6 +71,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
       });
 
       if (_songs.isEmpty) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('No MP3 files found in the Music directories.'),
@@ -77,6 +80,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
       }
     } catch (e) {
       debugPrint('Error loading songs: $e');
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to load songs. Please try again.'),

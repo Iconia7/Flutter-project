@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:project/views/screens/index.dart';
 import 'package:project/views/screens/orders.dart';
+import 'package:project/views/screens/searchscreen.dart';
 import 'package:project/views/screens/settings.dart';
-
-import 'package:project/views/widgets/audioplayermanager.dart';
-import 'package:project/views/widgets/miniplayer.dart';
+//import 'package:project/views/widgets/miniplayer.dart';
+//import 'package:project/views/widgets/audioplayermanager.dart';
+//import 'package:project/views/screens/songplayer.dart';
+//import 'package:project/views/widgets/audioplayermanager.dart';
+//import 'package:project/views/widgets/miniplayer.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isDarkMode; // Initial dark mode state
@@ -17,6 +20,7 @@ class HomeScreen extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -25,11 +29,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final audioPlayer = AudioPlayerManager().audioPlayer;
 
     // Pages with the dark mode state passed to ProfileScreen
     final List<Widget> pages = [
       DashboardScreen(),
+      SearchScreen(),
       LibraryScreen(),
       ProfileScreen(
         isDarkMode: widget.isDarkMode,
@@ -37,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ];
 
+    // ignore: deprecated_member_use
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -61,21 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: pages[_currentIndex], // Display current tab content
           ),
-          // MiniPlayer appears only when a song is playing
-          StreamBuilder<bool>(
-            stream: audioPlayer.playingStream,
-            builder: (context, snapshot) {
-              final isPlaying = snapshot.data ?? false;
-              if (isPlaying) {
-                return MiniPlayer(
-                  audioPlayer: audioPlayer,
-                  songTitle: "Playing Song Title", // Replace dynamically
-                  songImage: "assets/images/song_image.jpg", // Replace dynamically
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -93,6 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.library_music),
