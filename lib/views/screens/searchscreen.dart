@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart';
+import 'package:project/views/screens/songplayer.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SearchScreenState createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, String>> _searchResults = [];
-  bool _isLoading = false; // To show a loading indicator
+  bool _isLoading = false;
 
   Future<void> _search(String query) async {
     setState(() {
-      _isLoading = true; // Show loading indicator
+      _isLoading = true;
     });
 
     try {
@@ -27,10 +29,8 @@ class _SearchScreenState extends State<SearchScreen> {
         final document = parse(response.body);
         final searchResults = <Map<String, String>>[];
 
-        // Adjusted parsing logic
         document.querySelectorAll('.td_module_wrap').forEach((element) {
-          final titleElement =
-              element.querySelector('.entry-title a'); // Updated selector
+          final titleElement = element.querySelector('.entry-title a');
           final title = titleElement?.text.trim() ?? '';
           final link = titleElement?.attributes['href'] ?? '';
 
@@ -52,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
       debugPrint('Error during search: $e');
     } finally {
       setState(() {
-        _isLoading = false; // Hide loading indicator
+        _isLoading = false;
       });
     }
   }
@@ -60,9 +60,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mzukakibao Search'),
-      ),
       body: Column(
         children: [
           Padding(
@@ -108,7 +105,15 @@ class _SearchScreenState extends State<SearchScreen> {
                 return ListTile(
                   title: Text(song['title'] ?? 'Unknown'),
                   onTap: () {
-                    // Handle item tap, like opening a new screen or webview
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SongPlayerScreen(
+                          song: song,
+                          playlist: _searchResults,
+                        ),
+                      ),
+                    );
                   },
                 );
               },
@@ -119,3 +124,4 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 }
+
