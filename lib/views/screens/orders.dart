@@ -24,7 +24,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
     _requestPermissionAndLoadSongs();
   }
 
-  /// Requests storage permission and loads songs.
   Future<void> _requestPermissionAndLoadSongs() async {
     if (await Permission.storage.request().isGranted ||
         await Permission.manageExternalStorage.request().isGranted) {
@@ -39,7 +38,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
     }
   }
 
-  /// Loads MP3 songs from specified directories.
   Future<void> _loadSongs() async {
     try {
       final directory = await getExternalStorageDirectory();
@@ -89,7 +87,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
     }
   }
 
-  /// Generates a playlist for the song player.
   List<Map<String, String>> _generatePlaylist() {
     return _songs.map((song) {
       return {
@@ -100,7 +97,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
     }).toList();
   }
 
-  /// Refreshes the song list.
   Future<void> _refreshSongs() async {
     await _loadSongs();
   }
