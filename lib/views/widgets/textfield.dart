@@ -22,7 +22,7 @@ class MyTextField extends StatefulWidget {
 }
 
 class _MyTextFieldState extends State<MyTextField> {
-  bool _isObscured = true; // Track the visibility of the password
+  bool _isObscured = true; 
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class _MyTextFieldState extends State<MyTextField> {
       child: TextField(
         controller: widget.controller,
         obscureText:
-            widget.isPassword && _isObscured, // Control text visibility
+            widget.isPassword && _isObscured, 
         decoration: InputDecoration(
           fillColor: widget.colour,
           hintText: widget.hint,
