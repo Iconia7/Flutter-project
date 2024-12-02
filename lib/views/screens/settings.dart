@@ -16,15 +16,15 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late bool _isDarkMode; // Local state for dark mode
-  bool _isNotificationsEnabled = true; // Tracks Notifications state
+  late bool _isDarkMode; 
+  bool _isNotificationsEnabled = true; 
   String _name = "Newton Mwangi";
   String _email = "mwanginewton239@gmail.com";
 
   @override
   void initState() {
     super.initState();
-    _isDarkMode = widget.isDarkMode; // Initialize with the parent's state
+    _isDarkMode = widget.isDarkMode; 
   }
 
   @override
@@ -35,7 +35,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile Picture and Edit Button
             Row(
               children: [
                 const CircleAvatar(
@@ -71,8 +70,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
             const SizedBox(height: 20),
-
-            // Account Settings Section
             const Text(
               "Account Settings",
               style: TextStyle(
@@ -98,8 +95,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () => _logOut(context),
             ),
             const SizedBox(height: 20),
-
-            // App Settings Section
             const Text(
               "App Settings",
               style: TextStyle(
@@ -123,7 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 value: _isDarkMode,
                 onChanged: (value) {
                   setState(() => _isDarkMode = value);
-                  widget.onThemeChanged(value); // Notify the parent
+                  widget.onThemeChanged(value); 
                 },
               ),
             ),
@@ -133,7 +128,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Show a dialog to edit profile name and email
   void _showEditProfileDialog(BuildContext context) {
     final nameController = TextEditingController(text: _name);
     final emailController = TextEditingController(text: _email);
@@ -175,7 +169,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Show a dialog to change email
   void _showChangeEmailDialog(BuildContext context) {
     final emailController = TextEditingController();
 
@@ -206,7 +199,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Shows a general informational dialog
   void _showInfoDialog(BuildContext context, String title, String content) {
     showDialog(
       context: context,
@@ -223,7 +215,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Logs out the user
   void _logOut(BuildContext context) {
     Navigator.pushReplacementNamed(context, '/login');
   }
