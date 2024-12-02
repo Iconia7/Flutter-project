@@ -245,7 +245,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  /// Logs the user in and saves credentials if successful.
+
   Future<void> remoteLogin() async {
     setState(() {
       isLoading = true;
@@ -260,7 +260,6 @@ class _LoginState extends State<Login> {
         int loginStatus = serverResponse['success'];
         if (loginStatus == 1) {
           if (rememberMe) {
-            // Save username and password if "Remember Me" is checked
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString('savedUsername', name.text.trim());
             prefs.setString('savedPassword', pass.text.trim());
@@ -285,7 +284,6 @@ class _LoginState extends State<Login> {
     }
   }
 
-  /// Shows a validation message near the specified field.
   void _showValidationDialog(
       BuildContext context, String message, GlobalKey key) {
     final overlay = Overlay.of(context);
