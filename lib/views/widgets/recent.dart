@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RecentlyPlayedManager {
@@ -13,7 +12,6 @@ class RecentlyPlayedManager {
   }
 
   RecentlyPlayedManager._internal() {
-    // Load recently played songs when the manager is initialized
     loadRecentlyPlayed();
   }
 
